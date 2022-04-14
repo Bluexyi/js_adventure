@@ -1,8 +1,9 @@
 class Game {
 
-    constructor(camera, loader, context) {
+    constructor(camera, loader, hero, context) {
         this.camera = camera;
         this.loader = loader;
+        this.hero = hero;
         this.context = context;
 
         this.tick = this.tick.bind(this)
@@ -14,12 +15,15 @@ class Game {
         Keyboard.listenForEvents(
             [Keyboard.LEFT, Keyboard.RIGHT, Keyboard.UP, Keyboard.DOWN]);
         this.tileMap = this.loader.getImage('tiles');
+        this.hero.image = this.loader.getImage('hero');
+        this.camera.follow(this.hero);
     };
 
     //Charge les images dans un dictionnaire
     load() {
         return [
             this.loader.loadImage('tiles', './images/tiles.png'),
+            this.loader.loadImage('hero', './images/character.png'),
         ];
     };
 
@@ -50,15 +54,16 @@ class Game {
     };
 
     update(delta) {
-        // gérer le mouvement de la caméra avec les touches fléchées
-        let dirx = 0;
-        let diry = 0;
+        // gérer le mouvement du héros avec les touches fléchées
+        var dirx = 0;
+        var diry = 0;
         if (Keyboard.isDown(Keyboard.LEFT)) { dirx = -1; }
-        if (Keyboard.isDown(Keyboard.RIGHT)) { dirx = 1; }
-        if (Keyboard.isDown(Keyboard.UP)) { diry = -1; }
-        if (Keyboard.isDown(Keyboard.DOWN)) { diry = 1; }
+        else if (Keyboard.isDown(Keyboard.RIGHT)) { dirx = 1; }
+        else if (Keyboard.isDown(Keyboard.UP)) { diry = -1; }
+        else if (Keyboard.isDown(Keyboard.DOWN)) { diry = 1; }
 
-        this.camera.move(delta, dirx, diry);
+        this.hero.move(delta, dirx, diry);
+        this.camera.update();
     };
 
     _drawLayer(layer) {
@@ -94,9 +99,16 @@ class Game {
     render() {
         // dessiner la couche de fond de carte
         this._drawLayer(0);
+
+        // dessiner personnage principal au centre de l'ecran
+        this.context.drawImage(
+            this.hero.image,
+            this.hero.screenX - this.hero.width / 2,
+            this.hero.screenY - this.hero.height / 2
+        );
+
         // dessine la couche supérieure de la carte
         this._drawLayer(1);
     };
 
 }
- 
