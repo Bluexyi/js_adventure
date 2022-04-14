@@ -1,13 +1,30 @@
 class Hero {
 
-    constructor(map, x, y, speed, spriteName) {
+    constructor(map, x, y, speed, spriteName, state) {
         this.map = map;
         this.x = x;
         this.y = y;
         this.speed = speed
         this.width = map.tsize;
         this.height = map.tsize;
+        
         this.spriteName = spriteName;
+        this.state = state
+
+        this.count = 0;
+        
+        //this.direction = "none";
+        this.directionIndex = 1;
+        this.spriteSpeed = 5; //Plus petit = plus rapide
+        
+        this.scale = 1; //Sprite grossissement
+    }
+
+    initStates(){
+        this.state.generateState("up", 0, 3, 0);
+        this.state.generateState("down", 0, 3, 1);
+        this.state.generateState("left", 0, 3, 2);
+        this.state.generateState("right", 0, 3, 3);
     }
 
     move(delta, dirx, diry) {
@@ -41,6 +58,8 @@ class Hero {
             this.map.isSolidTileAtXY(right, bottom) ||
             this.map.isSolidTileAtXY(left, bottom);
         if (!collision) { return; }
+
+        console.log("COLLISION !!")
 
         if (diry > 0) {
             row = this.map.getRow(bottom);

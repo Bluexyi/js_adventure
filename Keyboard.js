@@ -1,40 +1,42 @@
-let Keyboard = {};
+class Keyboard {
 
-Keyboard.LEFT = 37;
-Keyboard.RIGHT = 39;
-Keyboard.UP = 38;
-Keyboard.DOWN = 40;
+    LEFT = 37;
+    RIGHT = 39;
+    UP = 38;
+    DOWN = 40;
 
-Keyboard._keys = {};
+    _keys = {};
 
-Keyboard.listenForEvents = function (keys) {
-    window.addEventListener('keydown', this._onKeyDown.bind(this));
-    window.addEventListener('keyup', this._onKeyUp.bind(this));
+    listenForEvents(keys) {
+        window.addEventListener('keydown', this._onKeyDown.bind(this));
+        window.addEventListener('keyup', this._onKeyUp.bind(this));
 
-    keys.forEach(function (key) {
-        this._keys[key] = false;
-    }.bind(this));
+        keys.forEach(function (key) {
+            this._keys[key] = false;
+        }.bind(this));
+    }
+
+    _onKeyDown(event) {
+        let keyCode = event.keyCode;
+        if (keyCode in this._keys) {
+            event.preventDefault();
+            this._keys[keyCode] = true;
+        }
+    };
+
+    _onKeyUp(event) {
+        let keyCode = event.keyCode;
+        if (keyCode in this._keys) {
+            event.preventDefault();
+            this._keys[keyCode] = false;
+        }
+    };
+
+    isDown(keyCode) {
+        if (!keyCode in this._keys) {
+            throw new Error('Keycode ' + keyCode + ' n\'est pas écouté');
+        }
+        return this._keys[keyCode];
+    };
+
 }
-
-Keyboard._onKeyDown = function (event) {
-    let keyCode = event.keyCode;
-    if (keyCode in this._keys) {
-        event.preventDefault();
-        this._keys[keyCode] = true;
-    }
-};
-
-Keyboard._onKeyUp = function (event) {
-    let keyCode = event.keyCode;
-    if (keyCode in this._keys) {
-        event.preventDefault();
-        this._keys[keyCode] = false;
-    }
-};
-
-Keyboard.isDown = function (keyCode) {
-    if (!keyCode in this._keys) {
-        throw new Error('Keycode ' + keyCode + ' n\'est pas écouté');
-    }
-    return this._keys[keyCode];
-};

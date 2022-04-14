@@ -1,6 +1,7 @@
 class Game {
 
-    constructor(camera, loader, hero, context) {
+    constructor(keyboard, camera, loader, hero, context) {
+        this.keyboard = keyboard
         this.camera = camera;
         this.loader = loader;
         this.hero = hero;
@@ -12,18 +13,19 @@ class Game {
     //Initialise les évenements du clavier
     //charge l'image de la map du dictionnaire loader
     init() {
-        Keyboard.listenForEvents(
-            [Keyboard.LEFT, Keyboard.RIGHT, Keyboard.UP, Keyboard.DOWN]);
+        this.keyboard.listenForEvents(
+            [this.keyboard.LEFT, this.keyboard.RIGHT, this.keyboard.UP, this.keyboard.DOWN]);
         this.tileMap = this.loader.getImage('tiles');
         this.hero.image = this.loader.getImage('hero');
+        this.hero.initStates();
         this.camera.follow(this.hero);
     };
 
     //Charge les images dans un dictionnaire
     load() {
         return [
-            this.loader.loadImage('tiles', './images/tiles.png'),
-            this.loader.loadImage('hero', './images/character.png'),
+            this.loader.loadImage('tiles', './images/tiles.png', 0, 0),
+            this.loader.loadImage('hero', './images/player.png', 4, 4),
         ];
     };
 
@@ -57,10 +59,10 @@ class Game {
         // gérer le mouvement du héros avec les touches fléchées
         var dirx = 0;
         var diry = 0;
-        if (Keyboard.isDown(Keyboard.LEFT)) { dirx = -1; }
-        else if (Keyboard.isDown(Keyboard.RIGHT)) { dirx = 1; }
-        else if (Keyboard.isDown(Keyboard.UP)) { diry = -1; }
-        else if (Keyboard.isDown(Keyboard.DOWN)) { diry = 1; }
+        if (this.keyboard.isDown(this.keyboard.LEFT)) { dirx = -1; }
+        else if (this.keyboard.isDown(this.keyboard.RIGHT)) { dirx = 1; }
+        else if (this.keyboard.isDown(this.keyboard.UP)) { diry = -1; }
+        else if (this.keyboard.isDown(this.keyboard.DOWN)) { diry = 1; }
 
         this.hero.move(delta, dirx, diry);
         this.camera.update();
@@ -96,16 +98,40 @@ class Game {
         }
     };
 
+    _drawHero(stateName){
+        this.context.drawImage(
+            this.hero.image, //Image
+                this.hero.state.getState(stateName).frameIndex * (this.hero.image.width / this.hero.image.nbSpriteRow), //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                this.hero.state.getState(stateName).colIndex * (this.hero.image.height / this.hero.image.nbSpriteCol), // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                this.hero.image.width / this.hero.image.nbSpriteRow, // Largeur de l'image source
+                this.hero.image.height / this.hero.image.nbSpriteCol, // Hauteur de l'image source 
+                this.hero.screenX - this.hero.width / 2, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+                this.hero.screenY - this.hero.height / 2, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+                (this.hero.image.width / this.hero.image.nbSpriteRow ) * this.hero.scale, // La largeur de l'image dessinée
+                (this.hero.image.height / this.hero.image.nbSpriteCol ) * this.hero.scale // La hauteur de l'image dessinée
+            );
+
+            //Pour boucler sur les sprite
+            this.hero.count ++;
+            if (this.hero.count > this.hero.spriteSpeed) {
+                this.hero.state.getState(stateName).frameIndex ++;
+                this.hero.count = 0;
+            }
+
+            //Quand on arrive à la dernière on recommence à 0
+            if (this.hero.state.getState(stateName).frameIndex > this.hero.state.getState(stateName).endRowIndex) {
+                this.hero.state.getState(stateName).frameIndex = this.hero.state.getState(stateName).startRowIndex;
+            }
+        
+    };
+
     render() {
+        
         // dessiner la couche de fond de carte
         this._drawLayer(0);
 
         // dessiner personnage principal au centre de l'ecran
-        this.context.drawImage(
-            this.hero.image,
-            this.hero.screenX - this.hero.width / 2,
-            this.hero.screenY - this.hero.height / 2
-        );
+        this._drawHero('down');
 
         // dessine la couche supérieure de la carte
         this._drawLayer(1);
