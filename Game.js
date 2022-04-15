@@ -59,10 +59,28 @@ class Game {
         // gérer le mouvement du héros avec les touches fléchées
         var dirx = 0;
         var diry = 0;
-        if (this.keyboard.isDown(this.keyboard.LEFT)) { dirx = -1; }
-        else if (this.keyboard.isDown(this.keyboard.RIGHT)) { dirx = 1; }
-        else if (this.keyboard.isDown(this.keyboard.UP)) { diry = -1; }
-        else if (this.keyboard.isDown(this.keyboard.DOWN)) { diry = 1; }
+        if (this.hero.direction != "static") {
+            this.hero.lastDirection = this.hero.direction;
+        }
+        if (this.keyboard.isDown(this.keyboard.LEFT)) {
+            dirx = -1;
+            this.hero.direction = "left";
+        }
+        else if (this.keyboard.isDown(this.keyboard.RIGHT)) {
+            dirx = 1;
+            this.hero.direction = "right";
+        }
+        else if (this.keyboard.isDown(this.keyboard.UP)) {
+            diry = -1;
+            this.hero.direction = "up";
+        }
+        else if (this.keyboard.isDown(this.keyboard.DOWN)) {
+            diry = 1;
+            this.hero.direction = "down";
+        }
+        else {
+            this.hero.direction = "static";
+        }
 
         this.hero.move(delta, dirx, diry);
         this.camera.update();
@@ -98,23 +116,25 @@ class Game {
         }
     };
 
-    _drawHero(stateName){
-        this.context.drawImage(
-            this.hero.image, //Image
+    _drawHero(stateName) {
+        if (this.hero.direction != 'static') {
+            this.context.drawImage(
+                this.hero.image, //Image
                 this.hero.state.getState(stateName).frameIndex * (this.hero.image.width / this.hero.image.nbSpriteRow), //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
                 this.hero.state.getState(stateName).colIndex * (this.hero.image.height / this.hero.image.nbSpriteCol), // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
                 this.hero.image.width / this.hero.image.nbSpriteRow, // Largeur de l'image source
                 this.hero.image.height / this.hero.image.nbSpriteCol, // Hauteur de l'image source 
                 this.hero.screenX - this.hero.width / 2, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
                 this.hero.screenY - this.hero.height / 2, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
-                (this.hero.image.width / this.hero.image.nbSpriteRow ) * this.hero.scale, // La largeur de l'image dessinée
-                (this.hero.image.height / this.hero.image.nbSpriteCol ) * this.hero.scale // La hauteur de l'image dessinée
+                (this.hero.image.width / this.hero.image.nbSpriteRow) * this.hero.scale, // La largeur de l'image dessinée
+                (this.hero.image.height / this.hero.image.nbSpriteCol) * this.hero.scale // La hauteur de l'image dessinée
             );
 
+
             //Pour boucler sur les sprite
-            this.hero.count ++;
+            this.hero.count++;
             if (this.hero.count > this.hero.spriteSpeed) {
-                this.hero.state.getState(stateName).frameIndex ++;
+                this.hero.state.getState(stateName).frameIndex++;
                 this.hero.count = 0;
             }
 
@@ -122,16 +142,30 @@ class Game {
             if (this.hero.state.getState(stateName).frameIndex > this.hero.state.getState(stateName).endRowIndex) {
                 this.hero.state.getState(stateName).frameIndex = this.hero.state.getState(stateName).startRowIndex;
             }
-        
+        } else {
+            this.context.drawImage(
+                this.hero.image, //Image
+                this.hero.state.getState(this.hero.lastDirection).frameIndex * (this.hero.image.width / this.hero.image.nbSpriteRow), //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                this.hero.state.getState(this.hero.lastDirection).colIndex * (this.hero.image.height / this.hero.image.nbSpriteCol), // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                this.hero.image.width / this.hero.image.nbSpriteRow, // Largeur de l'image source
+                this.hero.image.height / this.hero.image.nbSpriteCol, // Hauteur de l'image source 
+                this.hero.screenX - this.hero.width / 2, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+                this.hero.screenY - this.hero.height / 2, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+                (this.hero.image.width / this.hero.image.nbSpriteRow) * this.hero.scale, // La largeur de l'image dessinée
+                (this.hero.image.height / this.hero.image.nbSpriteCol) * this.hero.scale // La hauteur de l'image dessinée
+            );
+        }
+
     };
 
     render() {
-        
+
         // dessiner la couche de fond de carte
         this._drawLayer(0);
 
         // dessiner personnage principal au centre de l'ecran
-        this._drawHero('down');
+        //this._drawHero("up");
+        this._drawHero(this.hero.direction);
 
         // dessine la couche supérieure de la carte
         this._drawLayer(1);
