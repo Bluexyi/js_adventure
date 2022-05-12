@@ -28,6 +28,19 @@ var map = {
         4, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 4,
         4, 4, 4, 0, 5, 4, 4, 4, 4, 4, 4, 4,
         4, 4, 4, 0, 0, 3, 3, 3, 3, 3, 3, 3
+    ], [
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1,
+        1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1
     ]],
     getTile: function (layer, col, row) {
         // todo
@@ -46,8 +59,8 @@ var map = {
         // les tuiles 3 et 5 sont solides, les autres sont praticables.
         // Boucle à travers toutes les couches et retourne VRAI si une tuile est solide.
         return this.layers.reduce(function (res, layer, index) {
-            var tile = this.getTile(index, col, row);
-            var isSolid = tile === 3 || tile === 5;
+            var tile = this.getTile(2, col, row);
+            var isSolid = tile === 1;
             return res || isSolid;
         }.bind(this), false);
     },
@@ -61,9 +74,9 @@ var map = {
         return Math.floor(y / this.tsize);
     },
     getX: function (col) {
-        // col = 2
-        // 2 * 64
-        // return 128
+        // col = 4
+        // 4 * 64
+        // return 256
         return col * this.tsize;
     },
     getY: function (row) {

@@ -8,7 +8,7 @@ window.onload = function () {
   let loader = new Loader();
   let state = new State();
   let hero = new Hero(map, 160, 160, 256, 'hero', state);
-  let camera = new Camera(map, canvas.width, canvas.height);
+  let camera = new Camera(map, canvas.width , canvas.height);
   let game = new Game(keyboard, camera, loader, hero, context);
 
   game.run();

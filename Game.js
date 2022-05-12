@@ -15,10 +15,12 @@ class Game {
     init() {
         this.keyboard.listenForEvents(
             [this.keyboard.LEFT, this.keyboard.RIGHT, this.keyboard.UP, this.keyboard.DOWN]);
-        this.tileMap = this.loader.getImage('tiles');
-        this.hero.image = this.loader.getImage('hero');
-        this.hero.initStates();
-        this.camera.follow(this.hero);
+        this.tileMap = this.loader.getImage('tiles')
+        this.hero.image = this.loader.getImage('hero')
+        this.hero.width = this.hero.image.width / this.hero.image.nbSpriteRow
+        this.hero.height = this.hero.image.height / this.hero.image.nbSpriteCol
+        this.hero.initStates()
+        this.camera.follow(this.hero)
     };
 
     //Charge les images dans un dictionnaire
@@ -156,19 +158,52 @@ class Game {
             );
         }
 
+        this.context.beginPath(); 
+        this.context.strokeStyle = '#f00';  // some color/style
+        this.context.lineWidth = 2;         // thickness
+        this.context.strokeRect(
+            this.hero.screenX - this.hero.width / 2,
+            this.hero.screenY - this.hero.height / 2,
+            this.hero.image.width / this.hero.image.nbSpriteRow, 
+            this.hero.image.height / this.hero.image.nbSpriteCol
+        );
+
+    };
+
+    _drawGrid() {
+        var width = map.cols * map.tsize;
+        var height = map.rows * map.tsize;
+        var x, y;
+        for (var r = 0; r < map.rows; r++) {
+            x = - this.camera.x;
+            y = r * map.tsize - this.camera.y;
+            this.context.beginPath();
+            this.context.moveTo(x, y);
+            this.context.lineTo(width, y);
+            this.context.stroke();
+        }
+        for (var c = 0; c < map.cols; c++) {
+            x = c * map.tsize - this.camera.x;
+            y = - this.camera.y;
+            this.context.beginPath();
+            this.context.moveTo(x, y);
+            this.context.lineTo(x, height);
+            this.context.stroke();
+        }
     };
 
     render() {
-
         // dessiner la couche de fond de carte
         this._drawLayer(0);
 
         // dessiner personnage principal au centre de l'ecran
-        //this._drawHero("up");
         this._drawHero(this.hero.direction);
 
         // dessine la couche supérieure de la carte
         this._drawLayer(1);
+
+        //pour afficher la grille (debug)
+        this._drawGrid();
     };
 
 }

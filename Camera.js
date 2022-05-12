@@ -11,11 +11,13 @@ class Camera {
 
     follow(sprite) {
         this.following = sprite;
-        sprite.screenX = 0;
+        sprite.screenX = 0; //Nouveaux attribut pour le hero (sprite)
         sprite.screenY = 0;
     };
 
     update() {
+        //this.following = le hero
+
         // supposez que le sprite suivi doit être placé au centre de l'écran
         // quand c'est possible
         this.following.screenX = this.width / 2; //centre de largeur
@@ -24,7 +26,8 @@ class Camera {
         // faire en sorte que la caméra suive le sprite
         this.x = this.following.x - this.width / 2;
         this.y = this.following.y - this.height / 2;
-        // valeurs de serrage
+
+        // valeurs de serrage pour pour que la camera ne suive plus quand on est sur les bord
         this.x = Math.max(0, Math.min(this.x, this.maxX));
         this.y = Math.max(0, Math.min(this.y, this.maxY));
 
@@ -44,4 +47,3 @@ class Camera {
     };
     
 }
-
