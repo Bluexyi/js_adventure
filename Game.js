@@ -17,7 +17,7 @@ class Game {
             [this.keyboard.LEFT, this.keyboard.RIGHT, this.keyboard.UP, this.keyboard.DOWN]);
         this.tileMap = this.loader.getImage('tiles')
         this.hero.image = this.loader.getImage('hero')
-        this.hero.width = this.hero.image.width / this.hero.image.nbSpriteRow
+        this.hero.width = this.hero.image.width / this.hero.image.nbSpriteRow 
         this.hero.height = this.hero.image.height / this.hero.image.nbSpriteCol
         this.hero.initStates()
         this.camera.follow(this.hero)
@@ -167,7 +167,15 @@ class Game {
             this.hero.image.width / this.hero.image.nbSpriteRow, 
             this.hero.image.height / this.hero.image.nbSpriteCol
         );
+    };
 
+    _drawBoxCollision() {
+        this.context.strokeRect(
+            this.hero.screenX - this.hero.width / 2,
+            this.hero.screenY - this.hero.height / 2,
+            this.hero.width, 
+            this.hero.height
+        );
     };
 
     _drawGrid() {
@@ -193,17 +201,23 @@ class Game {
     };
 
     render() {
-        // dessiner la couche de fond de carte
+        // dessiner le revetement du sol
         this._drawLayer(0);
+
+        // dessiner les element au premier plan
+        this._drawLayer(1);
 
         // dessiner personnage principal au centre de l'ecran
         this._drawHero(this.hero.direction);
 
-        // dessine la couche supérieure de la carte
-        this._drawLayer(1);
+        // dessine les elements au second plan
+        this._drawLayer(2);
 
         //pour afficher la grille (debug)
         this._drawGrid();
+
+        //Afficher la box collision du Hero
+        this._drawBoxCollision();
     };
 
 }

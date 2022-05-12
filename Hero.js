@@ -65,7 +65,7 @@ class Hero {
         console.log("this.width : ", this.width); //64
         console.log("left : ", left); // 251.73503999999912 */
         var right = this.x + this.width / 2 - 1;
-        var top = this.y - this.height / 2;
+        var top = this.y - (this.height / 2 - 20);
         var bottom = this.y + this.height / 2 - 1;
 
         // vérification des collisions sur les diagonales
@@ -87,7 +87,7 @@ class Hero {
         else if (diry < 0) {
             //console.log("2")
             row = this.map.getRow(top);
-            this.y = this.height / 2 + this.map.getY(row + 1);
+            this.y =  (this.height / 2 - 20) + this.map.getY(row + 1);
         }
         else if (dirx > 0) {
             col = this.map.getCol(right);
