@@ -1,9 +1,10 @@
 class Game {
 
-    constructor(keyboard, camera, loader, hero, context) {
-        this.keyboard = keyboard
+    constructor(keyboard, camera, loader, pnj, hero, context) {
+        this.keyboard = keyboard;
         this.camera = camera;
         this.loader = loader;
+        this.pnj = pnj;
         this.hero = hero;
         this.context = context;
 
@@ -15,9 +16,17 @@ class Game {
     init() {
         this.keyboard.listenForEvents(
             [this.keyboard.LEFT, this.keyboard.RIGHT, this.keyboard.UP, this.keyboard.DOWN]);
+
+        //PNJS
+        this.pnj.image = this.loader.getImage(this.pnj.spriteName)
+        this.pnj.width = this.pnj.image.width / this.pnj.image.nbSpriteRow
+        this.pnj.height = this.pnj.image.height / this.pnj.image.nbSpriteCol
+        this.pnj.initStates()
+
+        //HERO
         this.tileMap = this.loader.getImage('tiles')
-        this.hero.image = this.loader.getImage('hero')
-        this.hero.width = this.hero.image.width / this.hero.image.nbSpriteRow 
+        this.hero.image = this.loader.getImage(this.hero.spriteName)
+        this.hero.width = this.hero.image.width / this.hero.image.nbSpriteRow
         this.hero.height = this.hero.image.height / this.hero.image.nbSpriteCol
         this.hero.initStates()
         this.camera.follow(this.hero)
@@ -118,6 +127,22 @@ class Game {
         }
     };
 
+    _drawPNJs() {
+        if (this.pnj.isVisible(this.camera.x, this.camera.y)) {
+            this.context.drawImage(
+                this.pnj.image, //Image
+                this.pnj.image.width / this.pnj.image.nbSpriteRow, //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                this.pnj.image.height / this.pnj.image.nbSpriteCol, // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                this.pnj.image.width / this.pnj.image.nbSpriteRow, // Largeur de l'image source
+                this.pnj.image.height / this.pnj.image.nbSpriteCol, // Hauteur de l'image source
+                (this.pnj.x - this.pnj.width / 2) - this.camera.x, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+                (this.pnj.y - this.pnj.height / 2) - this.camera.y, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+                (this.pnj.image.width / this.pnj.image.nbSpriteRow) * this.pnj.scale, // La largeur de l'image dessinée
+                (this.pnj.image.height / this.pnj.image.nbSpriteCol) * this.pnj.scale // La hauteur de l'image dessinée
+            );
+        }
+    };
+
     _drawHero(stateName) {
         if (this.hero.direction != 'static') {
             this.context.drawImage(
@@ -158,13 +183,13 @@ class Game {
             );
         }
 
-        this.context.beginPath(); 
+        this.context.beginPath();
         this.context.strokeStyle = '#f00';  // some color/style
         this.context.lineWidth = 2;         // thickness
         this.context.strokeRect(
             this.hero.screenX - this.hero.width / 2,
             this.hero.screenY - this.hero.height / 2,
-            this.hero.image.width / this.hero.image.nbSpriteRow, 
+            this.hero.image.width / this.hero.image.nbSpriteRow,
             this.hero.image.height / this.hero.image.nbSpriteCol
         );
     };
@@ -173,7 +198,7 @@ class Game {
         this.context.strokeRect(
             this.hero.screenX - this.hero.width / 2,
             this.hero.screenY - this.hero.height / 2,
-            this.hero.width, 
+            this.hero.width,
             this.hero.height
         );
     };
@@ -206,6 +231,10 @@ class Game {
 
         // dessiner les element au premier plan
         this._drawLayer(1);
+
+        //Dessiner les PNJs
+        this._drawPNJs();
+        //console.log("x = " + this.camera.x + " y = " + this.camera.y)
 
         // dessiner personnage principal au centre de l'ecran
         this._drawHero(this.hero.direction);
