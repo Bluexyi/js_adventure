@@ -5,7 +5,8 @@ window.onload = function () {
   canvas.height = 512;
 
   let keyboard = new Keyboard();
-  let map = maps[2];
+  let map = maps[1];
+ // console.log("ttttt ", map_1.getRedirection(2)[0])
   let loader = new Loader();
   let state = new State();
   let pnj1 = new PNJ(map, 200, 200, 256, 'hero', state, ["U","U","L","B","B","D"]);

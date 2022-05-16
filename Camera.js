@@ -6,7 +6,12 @@ class Camera {
         this.width = width;
         this.height = height;
         this.maxX = map.getCols() * map.getTsize() - width;
-        this.maxY = map.getCols() * map.getTsize() - height;
+        this.maxY = map.getRows() * map.getTsize() - height;
+    }
+
+    changeMap(map){
+        this.maxX = map.getCols() * map.getTsize() - this.width;
+        this.maxY = map.getRows() * map.getTsize() - this.height;
     }
 
     follow(sprite) {

@@ -1,16 +1,12 @@
 class Map {
 
-    constructor(id, name, cols, rows, tsize, layers) {
+    constructor(id, name, cols, rows, tsize, redirections, layers) {
             this.id = id,
             this.name = name,
             this.cols = cols,
             this.rows = rows,
             this.tsize = tsize,
-            // 1 = herbe
-            // 2 = terre
-            // 3 = arbre bas
-            // 4 = arbre haut
-            // 5 = arbuste
+            this.redirections = redirections,
             this.layers = layers
     };
 
@@ -34,12 +30,21 @@ class Map {
         return this.tsize;
     }
 
+    getRedirections(){
+        return this.redirections;
+    }
+
     getLayers(){
         return this.layers;
     }
 
+    getRedirection(idRedirection){
+        return this.redirections[idRedirection];
+    }
+
     getTile(layer, col, row) {
         // todo
+        
         return this.layers[layer][row * this.cols + col];
         // (1, 2, 2)
         // layers[1][2*8 + 2]
@@ -54,7 +59,7 @@ class Map {
         var row = Math.floor(y / this.tsize);
 
         // Boucle à travers toutes le layer de collision et retourne VRAI si 1 est trouvé.
-        return this.layers.reduce(function (res, layer, index) {
+        return this.layers.reduce(function (res) {
             var tile = this.getTile(3, col, row);
             var isSolid = tile === 1;
             return res || isSolid;

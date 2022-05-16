@@ -46,6 +46,10 @@ class Hero {
         //console.log("AFTER this.y = ", this.y)
 
         // vérifier si on a marché dans une dalle non praticable
+      /*  console.log("X = ", Math.floor(this.x / this.width))
+        console.log("Y = ", Math.floor(this.y / this.height) + 1)
+        console.log(this.map.getTile(4, Math.floor(this.y / this.height) + 1, Math.floor(this.x / this.width)));*/
+
         this._collide(dirx, diry);
 
         // clamp values
@@ -54,6 +58,10 @@ class Hero {
         this.x = Math.max(0, Math.min(this.x, maxX));
         this.y = Math.max(0, Math.min(this.y, maxY));
     };
+
+    isRedirect(){
+        return this.map.getTile(4, this.map.getCol(this.x) , this.map.getCol(this.y) );
+    }
 
     _collide(dirx, diry) { //dirx diry (vaux soit 0 1 ou -1) corresponds à la direction du déplacement en cours
         var row, col;
@@ -93,8 +101,7 @@ class Hero {
             col = this.map.getCol(right);
             this.x = -this.width / 2 + this.map.getX(col); //HERE ICI !!!! //this.width est la largeur de la map
         }
-        else if (dirx < 0) {
-            console.log("4")     
+        else if (dirx < 0) {    
             col = this.map.getCol(left); // col = 3
             this.x = this.width / 2 + this.map.getX(col + 1); // 288 = 64 / 2 + 256 = 32 + 256
            /* console.log('---------');

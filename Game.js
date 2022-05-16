@@ -54,6 +54,19 @@ class Game {
             window.requestAnimationFrame(this.tick);
         }.bind(this));
     };
+    
+    //Redirection vers une autre map
+    redirectionMap(newMapId){
+        let newHeroPosition = this.map.getRedirection(newMapId);
+        let newMap = maps[newMapId];
+        this.map = newMap;
+        this.hero.map = newMap;
+        this.camera.changeMap(newMap);
+        this.pnj.map = newMap;
+        this.hero.x = newHeroPosition[0];
+        this.hero.y = newHeroPosition[1];
+        
+    }
 
     tick(elapsed) {
         window.requestAnimationFrame(this.tick);
@@ -99,6 +112,10 @@ class Game {
 
         this.hero.move(delta, dirx, diry);
         this.camera.update();
+        let redirectionNumber = this.hero.isRedirect();
+        if(redirectionNumber > 0 ){
+            this.redirectionMap(redirectionNumber);
+        }
     };
 
     _drawLayer(layer) {
@@ -108,6 +125,11 @@ class Game {
         let endRow = startRow + (this.camera.height / this.map.getTsize());
         let offsetX = -this.camera.x + startCol * this.map.getTsize();
         let offsetY = -this.camera.y + startRow * this.map.getTsize();
+
+ /*       console.log("startCol = ", startCol);
+        console.log("endCol = ", endCol);
+        console.log("startRow = ", startRow);
+        console.log("endRow = ", endRow);*/
 
         for (let c = startCol; c <= endCol; c++) {
             for (let r = startRow; r <= endRow; r++) {

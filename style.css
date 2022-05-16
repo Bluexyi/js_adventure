@@ -3,7 +3,7 @@ html, body {
 }
 
 canvas {
-  background: #EEE;
+  background: black;
   display: block;
   margin: 0 auto;
   border: solid 6px #AAA;
