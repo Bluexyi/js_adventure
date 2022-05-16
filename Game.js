@@ -1,7 +1,8 @@
 class Game {
 
-    constructor(keyboard, camera, loader, pnj, hero, context) {
+    constructor(keyboard, map, camera, loader, pnj, hero, context) {
         this.keyboard = keyboard;
+        this.map = map;
         this.camera = camera;
         this.loader = loader;
         this.pnj = pnj;
@@ -16,6 +17,9 @@ class Game {
     init() {
         this.keyboard.listenForEvents(
             [this.keyboard.LEFT, this.keyboard.RIGHT, this.keyboard.UP, this.keyboard.DOWN]);
+        
+        //MAP
+        //this.map = new Map(1, "bourgpalette", 12, 12, 64, "todo"),
 
         //PNJS
         this.pnj.image = this.loader.getImage(this.pnj.spriteName)
@@ -98,29 +102,29 @@ class Game {
     };
 
     _drawLayer(layer) {
-        let startCol = Math.floor(this.camera.x / map.tsize);
-        let endCol = startCol + (this.camera.width / map.tsize);
-        let startRow = Math.floor(this.camera.y / map.tsize);
-        let endRow = startRow + (this.camera.height / map.tsize);
-        let offsetX = -this.camera.x + startCol * map.tsize;
-        let offsetY = -this.camera.y + startRow * map.tsize;
+        let startCol = Math.floor(this.camera.x / this.map.getTsize());
+        let endCol = startCol + (this.camera.width / this.map.getTsize());
+        let startRow = Math.floor(this.camera.y / this.map.getTsize());
+        let endRow = startRow + (this.camera.height / this.map.getTsize());
+        let offsetX = -this.camera.x + startCol * this.map.getTsize();
+        let offsetY = -this.camera.y + startRow * this.map.getTsize();
 
         for (let c = startCol; c <= endCol; c++) {
             for (let r = startRow; r <= endRow; r++) {
-                let tile = map.getTile(layer, c, r);
-                let x = (c - startCol) * map.tsize + offsetX;
-                let y = (r - startRow) * map.tsize + offsetY;
+                let tile = this.map.getTile(layer, c, r);
+                let x = (c - startCol) * this.map.getTsize() + offsetX;
+                let y = (r - startRow) * this.map.getTsize() + offsetY;
                 if (tile !== 0) { // 0 => tuile vide
                     this.context.drawImage(
                         this.tileMap, // image
-                        (tile - 1) * map.tsize, // source x
+                        (tile - 1) * this.map.getTsize(), // source x
                         0, // source y
-                        map.tsize, // largeur de la source
-                        map.tsize, // hauteur de la source
+                        this.map.getTsize(), // largeur de la source
+                        this.map.getTsize(), // hauteur de la source
                         Math.round(x), // cible x
                         Math.round(y), // cible y
-                        map.tsize, // largeur cible
-                        map.tsize // hauteur de la cible
+                        this.map.getTsize(), // largeur cible
+                        this.map.getTsize() // hauteur de la cible
                     );
                 }
             }
@@ -204,19 +208,19 @@ class Game {
     };
 
     _drawGrid() {
-        var width = map.cols * map.tsize;
-        var height = map.rows * map.tsize;
+        var width = this.map.getCols() * this.map.getTsize();
+        var height = this.map.getRows() * this.map.getTsize();
         var x, y;
-        for (var r = 0; r < map.rows; r++) {
+        for (var r = 0; r < this.map.getRows(); r++) {
             x = - this.camera.x;
-            y = r * map.tsize - this.camera.y;
+            y = r * this.map.getTsize() - this.camera.y;
             this.context.beginPath();
             this.context.moveTo(x, y);
             this.context.lineTo(width, y);
             this.context.stroke();
         }
-        for (var c = 0; c < map.cols; c++) {
-            x = c * map.tsize - this.camera.x;
+        for (var c = 0; c < this.map.getCols(); c++) {
+            x = c * this.map.getTsize() - this.camera.x;
             y = - this.camera.y;
             this.context.beginPath();
             this.context.moveTo(x, y);

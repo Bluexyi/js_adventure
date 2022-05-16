@@ -5,12 +5,13 @@ window.onload = function () {
   canvas.height = 512;
 
   let keyboard = new Keyboard();
+  let map = maps[2];
   let loader = new Loader();
   let state = new State();
   let pnj1 = new PNJ(map, 200, 200, 256, 'hero', state, ["U","U","L","B","B","D"]);
   let hero = new Hero(map, 160, 160, 256, 'hero', state);
   let camera = new Camera(map, canvas.width , canvas.height);
-  let game = new Game(keyboard, camera, loader,pnj1, hero, context);
+  let game = new Game(keyboard, map, camera, loader, pnj1, hero, context);
 
   game.run();
 };

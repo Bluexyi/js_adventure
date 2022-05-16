@@ -5,8 +5,8 @@ class Hero {
         this.x = x;
         this.y = y;
         this.speed = speed
-        this.width = map.tsize;
-        this.height = map.tsize;
+        this.width = map.getTsize();
+        this.height = map.getTsize();
 
         this.spriteName = spriteName;
         this.state = state;
@@ -49,8 +49,8 @@ class Hero {
         this._collide(dirx, diry);
 
         // clamp values
-        var maxX = this.map.cols * this.map.tsize;
-        var maxY = this.map.rows * this.map.tsize;
+        var maxX = this.map.getCols() * this.map.getTsize();
+        var maxY = this.map.getRows() * this.map.getTsize();
         this.x = Math.max(0, Math.min(this.x, maxX));
         this.y = Math.max(0, Math.min(this.y, maxY));
     };

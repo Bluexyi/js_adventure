@@ -5,8 +5,8 @@ class PNJ {
         this.x = x;
         this.y = y;
         this.speed = speed
-        this.width = map.tsize;
-        this.height = map.tsize;
+        this.width = map.getTsize();
+        this.height = map.getTsize();
 
         this.spriteName = spriteName;
         this.state = state;

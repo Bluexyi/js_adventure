@@ -1,75 +1,54 @@
-var map = {
-    cols: 12,
-    rows: 12,
-    tsize: 64,
-    // 1 = herbe
-    // 2 = terre
-    // 3 = arbre bas
-    // 4 = arbre haut
-    // 5 = arbuste
-    layers: [[ //Texture sol
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1,
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1,
-        2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1,
-        1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1,
-        1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1,
-        1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1
-    ], [ //Elements premier plan
-        3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
-        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
-        3, 0, 0, 5, 5, 0, 0, 0, 0, 5, 0, 3,
-        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
-        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
-        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
-        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
-        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
-        3, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 3,
-        3, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 3,
-        3, 3, 3, 0, 0, 3, 3, 3, 3, 3, 3, 3,
-    ], [ //Element seconds plan
-        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
-        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
-        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
-        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
-        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
-        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
-        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
-        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
-        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
-        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
-        4, 4, 4, 0, 0, 4, 4, 4, 4, 4, 4, 4,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [ //Collision
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1,
-        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1,
-        1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1,
-        1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1
-    ]],
-    getTile: function (layer, col, row) {
+class Map {
+
+    constructor(id, name, cols, rows, tsize, layers) {
+            this.id = id,
+            this.name = name,
+            this.cols = cols,
+            this.rows = rows,
+            this.tsize = tsize,
+            // 1 = herbe
+            // 2 = terre
+            // 3 = arbre bas
+            // 4 = arbre haut
+            // 5 = arbuste
+            this.layers = layers
+    };
+
+    getId(){
+        return this.id;
+    }
+
+    getName(){
+        return this.name;
+    }
+
+    getCols(){
+        return this.cols;
+    }
+
+    getRows(){
+        return this.rows;
+    }
+
+    getTsize(){
+        return this.tsize;
+    }
+
+    getLayers(){
+        return this.layers;
+    }
+
+    getTile(layer, col, row) {
         // todo
-        return this.layers[layer][row * map.cols + col];
+        return this.layers[layer][row * this.cols + col];
         // (1, 2, 2)
         // layers[1][2*8 + 2]
         // layers[1][16 + 2]
         // layers[1][20]
         // 1
-    },
-    isSolidTileAtXY: function (x, y) {
+    };
+
+    isSolidTileAtXY(x, y) {
         //Math.floor(x) renvoie le plus grand entier qui est inférieur ou égal à un nombre x
         var col = Math.floor(x / this.tsize);
         var row = Math.floor(y / this.tsize);
@@ -80,23 +59,28 @@ var map = {
             var isSolid = tile === 1;
             return res || isSolid;
         }.bind(this), false);
-    },
-    getCol: function (x) {
+    };
+
+    getCol(x) {
         // x = 5
         // 5 / 64
         // return 0
         return Math.floor(x / this.tsize);
-    },
-    getRow: function (y) {
+    };
+
+    getRow(y) {
         return Math.floor(y / this.tsize);
-    },
-    getX: function (col) {
+    };
+
+    getX(col) {
         // col = 4
         // 4 * 64
         // return 256
         return col * this.tsize;
-    },
-    getY: function (row) {
+    };
+
+    getY(row) {
         return row * this.tsize;
-    }
+    };
+
 };
