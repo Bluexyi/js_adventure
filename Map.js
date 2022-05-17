@@ -1,50 +1,59 @@
 class Map {
 
     constructor(id, name, cols, rows, tsize, redirections, layers) {
-            this.id = id,
+        this.id = id,
             this.name = name,
             this.cols = cols,
             this.rows = rows,
             this.tsize = tsize,
             this.redirections = redirections,
-            this.layers = layers
+            this.layers = layers,
+            this.pnjs = []
     };
 
-    getId(){
+    getId() {
         return this.id;
     }
 
-    getName(){
+    getName() {
         return this.name;
     }
 
-    getCols(){
+    getCols() {
         return this.cols;
     }
 
-    getRows(){
+    getRows() {
         return this.rows;
     }
 
-    getTsize(){
+    getTsize() {
         return this.tsize;
     }
 
-    getRedirections(){
+    getRedirections() {
         return this.redirections;
     }
 
-    getLayers(){
+    getLayers() {
         return this.layers;
     }
 
-    getRedirection(idRedirection){
+    getPnjs() {
+        return this.pnjs;
+    }
+
+    getRedirection(idRedirection) {
         return this.redirections[idRedirection];
+    }
+
+    addPnj(pnj) {
+        this.pnjs.push(pnj)
     }
 
     getTile(layer, col, row) {
         // todo
-        
+
         return this.layers[layer][row * this.cols + col];
         // (1, 2, 2)
         // layers[1][2*8 + 2]
@@ -66,6 +75,34 @@ class Map {
         }.bind(this), false);
     };
 
+    pnjCollision(x,y){
+        for (var pnj of this.pnjs) {
+            if((x > pnj.getX() && x < (pnj.getX() + pnj.getWidth())) && (y > pnj.getY() && y < (pnj.getY()+ pnj.getHeight()))){ //entre 250 et 298
+                console.log("Collison with pnj : ", pnj.getId());
+            }
+        }
+    }
+
+  /*  pnjCollide(heroX, heroY, heroW, heroH) {
+        for (var pnj of this.pnjs) {
+            console.log("PNJ ID-X-Y-W-H : " + pnj.getId() + "-" + pnj.getX() + "-" + pnj.getY() + "-" + pnj.getWidth() + "-" + pnj.getHeight())
+            console.log("HERO X-Y-W-H : " + heroX + "-" + heroY + "-" + heroW+ "-" + heroH)
+            if (heroY > (pnj.getY() + pnj.getHeight()) || (heroY + heroH) < pnj.getY()) { //si on est sur la même colonne
+                if (heroX > (pnj.getX() + pnj.getWidth())) { //
+                    console.log("1")
+                    return true
+                }
+                console.log("2") // je ne suis pas sur la même ligne
+                return true
+            }
+            console.log("3") //je suis sur la même ligne
+            return false
+        }
+    }*/
+    /*
+    PNJ ID-X-Y-W-H : 250-250-48-64
+    HERO X-Y-W-H   : 300-250-48-64
+*/
     getCol(x) {
         // x = 5
         // 5 / 64

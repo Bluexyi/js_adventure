@@ -1,11 +1,10 @@
 class Game {
 
-    constructor(keyboard, map, camera, loader, pnjs, hero, context) {
+    constructor(keyboard, map, camera, loader, hero, context) {
         this.keyboard = keyboard;
         this.map = map;
         this.camera = camera;
         this.loader = loader;
-        this.pnjs = pnjs;
         this.hero = hero;
         this.context = context;
 
@@ -22,13 +21,11 @@ class Game {
         //this.map = new Map(1, "bourgpalette", 12, 12, 64, "todo"),
 
         //PNJS
-        for (var pnj of this.pnjs) {
-            
-                pnj.image = this.loader.getImage(pnj.spriteName)
-                pnj.width = pnj.image.width / pnj.image.nbSpriteRow
-                pnj.height = pnj.image.height / pnj.image.nbSpriteCol
-                pnj.initStates()
-            
+        for (var pnj of this.map.getPnjs()) {
+            pnj.image = this.loader.getImage(pnj.spriteName)
+            pnj.width = pnj.image.width / pnj.image.nbSpriteRow
+            pnj.height = pnj.image.height / pnj.image.nbSpriteCol
+            pnj.initStates()
         }
 
         //HERO
@@ -66,9 +63,14 @@ class Game {
         this.map = newMap;
         this.hero.map = newMap;
         this.camera.changeMap(newMap);
-        for (var pnj of this.pnjs) {
-            if(pnj.getMapId() == newMap.getId()){
+        for (var pnj of this.map.getPnjs()) {
+            if (pnj.getMapId() == newMap.getId()) {
                 pnj.map = newMap;
+                pnj.image = this.loader.getImage(pnj.spriteName)
+                pnj.width = pnj.image.width / pnj.image.nbSpriteRow
+                pnj.height = pnj.image.height / pnj.image.nbSpriteCol
+                console.log(pnj.height)
+                console.log(pnj.width)
             }
         }
         this.hero.x = newHeroPosition[0];
@@ -166,8 +168,8 @@ class Game {
     };
 
     _drawPNJs() {
-        for (var pnj of this.pnjs) {
-            if(pnj.getMapId() == this.map.getId()){
+        for (var pnj of this.map.getPnjs()) {
+            if (pnj.getMapId() == this.map.getId()) {
                 if (pnj.isVisible(this.camera.x, this.camera.y)) {
                     this.context.drawImage(
                         pnj.image, //Image
@@ -175,8 +177,8 @@ class Game {
                         pnj.image.height / pnj.image.nbSpriteCol, // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
                         pnj.image.width / pnj.image.nbSpriteRow, // Largeur de l'image source
                         pnj.image.height / pnj.image.nbSpriteCol, // Hauteur de l'image source
-                        (pnj.x - pnj.width / 2) - this.camera.x, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
-                        (pnj.y - pnj.height / 2) - this.camera.y, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+                        (pnj.x) - this.camera.x, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+                        (pnj.y) - this.camera.y, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
                         (pnj.image.width / pnj.image.nbSpriteRow) * pnj.scale, // La largeur de l'image dessinée
                         (pnj.image.height / pnj.image.nbSpriteCol) * pnj.scale // La hauteur de l'image dessinée
                     );
