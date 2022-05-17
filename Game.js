@@ -9,6 +9,8 @@ class Game {
         this.context = context;
 
         this.tick = this.tick.bind(this)
+
+        this.currentDialogue = "";
     }
 
     //Initialise les évenements du clavier
@@ -104,18 +106,22 @@ class Game {
         }
 
         if (this.keyboard.isDown(this.keyboard.LEFT)) {
+            this.currentDialogue = "";
             dirx = -1;
             this.hero.direction = "left";
         }
         else if (this.keyboard.isDown(this.keyboard.RIGHT)) {
+            this.currentDialogue = "";
             dirx = 1;
             this.hero.direction = "right";
         }
         else if (this.keyboard.isDown(this.keyboard.UP)) {
+            this.currentDialogue = "";
             diry = -1;
             this.hero.direction = "up";
         }
         else if (this.keyboard.isDown(this.keyboard.DOWN)) {
+            this.currentDialogue = "";
             diry = 1;
             this.hero.direction = "down";
         }
@@ -134,12 +140,56 @@ class Game {
             if (this.hero.idPnjCollision > 0) {
                 for (var pnj of this.map.getPnjs()) {
                     if (pnj.getId() == this.hero.idPnjCollision) {
-                        console.log(pnj.getName() + " : " + pnj.getText());
+                        this.currentDialogue = pnj.getName() + " : " + pnj.getText();
                     }
                 }
             }
         }
     };
+
+    _drawBoxDialogue(text) {
+        CanvasRenderingContext2D.prototype.roundRect = function (x, y, width, height, radius) {
+            if (width < 2 * radius) radius = width / 2;
+            if (height < 2 * radius) radius = height / 2;
+            this.beginPath();
+            this.moveTo(x + radius, y);
+            this.arcTo(x + width, y, x + width, y + height, radius);
+            this.arcTo(x + width, y + height, x, y + height, radius);
+            this.arcTo(x, y + height, x, y, radius);
+            this.arcTo(x, y, x + width, y, radius);
+            this.closePath();
+            return this;
+        }
+
+        var posX = (canvas.width / 2) - 100;
+        var posY = (canvas.height / 2) - 100;
+
+        this.context.roundRect(10, canvas.height - 150, canvas.width - 20, 140, 8);
+
+        this.context.fillStyle = 'rgba(45, 45, 45, 0.7)';
+        this.context.fill();
+
+        this.context.roundRect(5, canvas.height - 160, canvas.width - 25, 140, 8);
+        this.context.fillStyle = 'rgba(255, 255, 255, 1)';
+        this.context.fill();
+
+        this._drawTextDialogue(text);
+    }
+
+    _drawTextDialogue(text) {
+        let textSize = 20;
+        this.context.fillStyle = "#1c2833";
+        this.context.font = textSize + 'px serif';
+
+        var lineheight = textSize;
+        var lines = text.split('\n');
+
+        for (var i = 0; i < lines.length; i++) {
+            this.context.fillText(lines[i], textSize, canvas.height - 130 + (i * lineheight));
+        }
+
+        // this.context.fillText(text, 20, canvas.height - 115, canvas.width - 50);
+    }
 
     _drawLayer(layer) {
         let startCol = Math.floor(this.camera.x / this.map.getTsize());
@@ -300,6 +350,10 @@ class Game {
 
         //Afficher la box collision du Hero
         this._drawBoxCollision();
+
+        if (this.currentDialogue != "") {
+            this._drawBoxDialogue(this.currentDialogue);
+        }
     };
 
 }
