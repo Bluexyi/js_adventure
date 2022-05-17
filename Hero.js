@@ -18,6 +18,8 @@ class Hero {
         this.spriteSpeed = 5; //Plus petit = plus rapide
 
         this.scale = 1; //Sprite grossissement
+
+        this.idPnjCollision = 0; 
     }
 
     initStates() {
@@ -34,6 +36,10 @@ class Hero {
         console.log("this.x : ", this.x);
         console.log("this.y : ", this.y);*/
 
+        
+ /*       console.log("X = ", dirx)
+        console.log("Y = ", diry)
+*/
         //delta est environs égale à 0.01
 
         // move hero
@@ -71,38 +77,36 @@ class Hero {
 
     pnjCollision(dirx, diry, beforeX, beforeY) {
 
-        let idPnjCollision;
-
-        let centerLeftX = this.x - this.width / 2;
+        let centerLeftX = (this.x + 10) - this.width / 2;
         let centerRightX = this.x + this.width / 2;
         let centerTopY = this.y - this.height / 2;
         let centerBottomY = this.y + this.height / 2;
 
         if (diry > 0) {
             //console.log("bas")
-            idPnjCollision = this.map.pnjCollision(this.x, centerBottomY);
-            if(idPnjCollision > 0){
+            this.idPnjCollision = this.map.pnjCollision(this.x, centerBottomY);
+            if(this.idPnjCollision > 0){
                 this.y = beforeY;
             }
         }
         else if (diry < 0) {
             //console.log("haut")
-            idPnjCollision = this.map.pnjCollision(this.x, centerTopY);
-            if(idPnjCollision > 0){
+            this.idPnjCollision = this.map.pnjCollision(this.x, centerTopY);
+            if(this.idPnjCollision > 0){
                 this.y = beforeY;
             }
         }
         else if (dirx > 0) {
             //console.log("droite")
-            idPnjCollision = this.map.pnjCollision(centerRightX, this.y);
-            if(idPnjCollision > 0){
+            this.idPnjCollision = this.map.pnjCollision(centerRightX, this.y);
+            if(this.idPnjCollision > 0){
                 this.x = beforeX;
             }
         }
         else if (dirx < 0) {
             //console.log("gauche")
-            idPnjCollision = this.map.pnjCollision(centerLeftX, this.y);
-            if(idPnjCollision > 0){
+            this.idPnjCollision = this.map.pnjCollision(centerLeftX, this.y);
+            if(this.idPnjCollision > 0){
                 this.x = beforeX;
             }
         }

@@ -78,7 +78,6 @@ class Map {
     pnjCollision(x,y){
         for (var pnj of this.pnjs) {
             if((x > pnj.getX() && x < (pnj.getX() + pnj.getWidth())) && (y > pnj.getY() && y < (pnj.getY()+ pnj.getHeight()))){
-                console.log("Collision pnj ", pnj.getId())
                 return pnj.getId()
             }
         }

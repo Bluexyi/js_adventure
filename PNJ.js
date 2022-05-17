@@ -1,7 +1,9 @@
 class PNJ {
 
-    constructor(id, mapId, size, x, y, speed, spriteName, state, movementPattern) {
+    constructor(id, name, text, mapId, size, x, y, speed, spriteName, state, movementPattern) {
         this.id = id;
+        this.name = name;
+        this.text = text;
         this.mapId = mapId
         this.x = x;
         this.y = y;
@@ -26,6 +28,14 @@ class PNJ {
 
     getId(){
         return this.id;
+    }
+
+    getName(){
+        return this.name;
+    }
+
+    getText(){
+        return this.text;
     }
 
     getMapId(){

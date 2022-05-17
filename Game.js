@@ -15,7 +15,7 @@ class Game {
     //charge l'image de la map du dictionnaire loader
     init() {
         this.keyboard.listenForEvents(
-            [this.keyboard.LEFT, this.keyboard.RIGHT, this.keyboard.UP, this.keyboard.DOWN]);
+            [this.keyboard.LEFT, this.keyboard.RIGHT, this.keyboard.UP, this.keyboard.DOWN, this.keyboard.ACTION]);
 
         //MAP
         //this.map = new Map(1, "bourgpalette", 12, 12, 64, "todo"),
@@ -69,8 +69,6 @@ class Game {
                 pnj.image = this.loader.getImage(pnj.spriteName)
                 pnj.width = pnj.image.width / pnj.image.nbSpriteRow
                 pnj.height = pnj.image.height / pnj.image.nbSpriteCol
-                console.log(pnj.height)
-                console.log(pnj.width)
             }
         }
         this.hero.x = newHeroPosition[0];
@@ -104,6 +102,7 @@ class Game {
         if (this.hero.direction != "static") {
             this.hero.lastDirection = this.hero.direction;
         }
+
         if (this.keyboard.isDown(this.keyboard.LEFT)) {
             dirx = -1;
             this.hero.direction = "left";
@@ -129,6 +128,16 @@ class Game {
         let redirectionNumber = this.hero.isRedirect();
         if (redirectionNumber > 0) {
             this.redirectionMap(redirectionNumber);
+        }
+
+        if (this.keyboard.isDown(this.keyboard.ACTION)) {
+            if (this.hero.idPnjCollision > 0) {
+                for (var pnj of this.map.getPnjs()) {
+                    if (pnj.getId() == this.hero.idPnjCollision) {
+                        console.log(pnj.getName() + " : " + pnj.getText());
+                    }
+                }
+            }
         }
     };
 
