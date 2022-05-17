@@ -40,6 +40,10 @@ class Hero {
         //this.x et this.y correponds à la position du hero
         //console.log("BEFORE this.x = ", this.x)
         //console.log("BEFORE this.y = ", this.y)
+
+        let beforeX = this.x;
+        let beforeY = this.y;
+
         this.x += dirx * this.speed * delta;
         this.y += diry * this.speed * delta;
         //console.log("AFTER this.x = ", this.x)
@@ -49,9 +53,9 @@ class Hero {
         /*  console.log("X = ", Math.floor(this.x / this.width))
           console.log("Y = ", Math.floor(this.y / this.height) + 1)
           console.log(this.map.getTile(4, Math.floor(this.y / this.height) + 1, Math.floor(this.x / this.width)));*/
-        
-        
-        this.pnjCollision(dirx, diry);
+
+
+        this.pnjCollision(dirx, diry, beforeX, beforeY);
         this._collide(dirx, diry);
 
         // clamp values
@@ -65,7 +69,9 @@ class Hero {
         return this.map.getTile(4, this.map.getCol(this.x), this.map.getCol(this.y));
     }
 
-    pnjCollision(dirx, diry){
+    pnjCollision(dirx, diry, beforeX, beforeY) {
+
+        let idPnjCollision;
 
         let centerLeftX = this.x - this.width / 2;
         let centerRightX = this.x + this.width / 2;
@@ -74,21 +80,33 @@ class Hero {
 
         if (diry > 0) {
             //console.log("bas")
-            this.map.pnjCollision(this.x, centerBottomY);
+            idPnjCollision = this.map.pnjCollision(this.x, centerBottomY);
+            if(idPnjCollision > 0){
+                this.y = beforeY;
+            }
         }
         else if (diry < 0) {
             //console.log("haut")
-            this.map.pnjCollision(this.x, centerTopY);
+            idPnjCollision = this.map.pnjCollision(this.x, centerTopY);
+            if(idPnjCollision > 0){
+                this.y = beforeY;
+            }
         }
         else if (dirx > 0) {
             //console.log("droite")
-            this.map.pnjCollision(centerRightX, this.y);
+            idPnjCollision = this.map.pnjCollision(centerRightX, this.y);
+            if(idPnjCollision > 0){
+                this.x = beforeX;
+            }
         }
         else if (dirx < 0) {
             //console.log("gauche")
-            this.map.pnjCollision(centerLeftX, this.y);
+            idPnjCollision = this.map.pnjCollision(centerLeftX, this.y);
+            if(idPnjCollision > 0){
+                this.x = beforeX;
+            }
         }
-        
+
     }
 
     _collide(dirx, diry) { //dirx diry (vaux soit 0 1 ou -1) corresponds à la direction du déplacement en cours

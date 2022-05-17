@@ -77,32 +77,14 @@ class Map {
 
     pnjCollision(x,y){
         for (var pnj of this.pnjs) {
-            if((x > pnj.getX() && x < (pnj.getX() + pnj.getWidth())) && (y > pnj.getY() && y < (pnj.getY()+ pnj.getHeight()))){ //entre 250 et 298
-                console.log("Collison with pnj : ", pnj.getId());
+            if((x > pnj.getX() && x < (pnj.getX() + pnj.getWidth())) && (y > pnj.getY() && y < (pnj.getY()+ pnj.getHeight()))){
+                console.log("Collision pnj ", pnj.getId())
+                return pnj.getId()
             }
         }
+        return 0;
     }
 
-  /*  pnjCollide(heroX, heroY, heroW, heroH) {
-        for (var pnj of this.pnjs) {
-            console.log("PNJ ID-X-Y-W-H : " + pnj.getId() + "-" + pnj.getX() + "-" + pnj.getY() + "-" + pnj.getWidth() + "-" + pnj.getHeight())
-            console.log("HERO X-Y-W-H : " + heroX + "-" + heroY + "-" + heroW+ "-" + heroH)
-            if (heroY > (pnj.getY() + pnj.getHeight()) || (heroY + heroH) < pnj.getY()) { //si on est sur la même colonne
-                if (heroX > (pnj.getX() + pnj.getWidth())) { //
-                    console.log("1")
-                    return true
-                }
-                console.log("2") // je ne suis pas sur la même ligne
-                return true
-            }
-            console.log("3") //je suis sur la même ligne
-            return false
-        }
-    }*/
-    /*
-    PNJ ID-X-Y-W-H : 250-250-48-64
-    HERO X-Y-W-H   : 300-250-48-64
-*/
     getCol(x) {
         // x = 5
         // 5 / 64
