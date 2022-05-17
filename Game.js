@@ -1,11 +1,11 @@
 class Game {
 
-    constructor(keyboard, map, camera, loader, pnj, hero, context) {
+    constructor(keyboard, map, camera, loader, pnjs, hero, context) {
         this.keyboard = keyboard;
         this.map = map;
         this.camera = camera;
         this.loader = loader;
-        this.pnj = pnj;
+        this.pnjs = pnjs;
         this.hero = hero;
         this.context = context;
 
@@ -17,15 +17,19 @@ class Game {
     init() {
         this.keyboard.listenForEvents(
             [this.keyboard.LEFT, this.keyboard.RIGHT, this.keyboard.UP, this.keyboard.DOWN]);
-        
+
         //MAP
         //this.map = new Map(1, "bourgpalette", 12, 12, 64, "todo"),
 
         //PNJS
-        this.pnj.image = this.loader.getImage(this.pnj.spriteName)
-        this.pnj.width = this.pnj.image.width / this.pnj.image.nbSpriteRow
-        this.pnj.height = this.pnj.image.height / this.pnj.image.nbSpriteCol
-        this.pnj.initStates()
+        for (var pnj of this.pnjs) {
+            
+                pnj.image = this.loader.getImage(pnj.spriteName)
+                pnj.width = pnj.image.width / pnj.image.nbSpriteRow
+                pnj.height = pnj.image.height / pnj.image.nbSpriteCol
+                pnj.initStates()
+            
+        }
 
         //HERO
         this.tileMap = this.loader.getImage('tiles')
@@ -54,18 +58,26 @@ class Game {
             window.requestAnimationFrame(this.tick);
         }.bind(this));
     };
-    
+
     //Redirection vers une autre map
-    redirectionMap(newMapId){
+    redirectionMap(newMapId) {
         let newHeroPosition = this.map.getRedirection(newMapId);
         let newMap = maps[newMapId];
         this.map = newMap;
         this.hero.map = newMap;
         this.camera.changeMap(newMap);
-        this.pnj.map = newMap;
+        for (var pnj of this.pnjs) {
+            if(pnj.getMapId() == newMap.getId()){
+                pnj.map = newMap;
+            }
+        }
         this.hero.x = newHeroPosition[0];
         this.hero.y = newHeroPosition[1];
-        
+
+    }
+
+    startTransition() {
+        this.context.fillRect(0, 0, this.width, this.height)
     }
 
     tick(elapsed) {
@@ -113,7 +125,7 @@ class Game {
         this.hero.move(delta, dirx, diry);
         this.camera.update();
         let redirectionNumber = this.hero.isRedirect();
-        if(redirectionNumber > 0 ){
+        if (redirectionNumber > 0) {
             this.redirectionMap(redirectionNumber);
         }
     };
@@ -126,10 +138,10 @@ class Game {
         let offsetX = -this.camera.x + startCol * this.map.getTsize();
         let offsetY = -this.camera.y + startRow * this.map.getTsize();
 
- /*       console.log("startCol = ", startCol);
-        console.log("endCol = ", endCol);
-        console.log("startRow = ", startRow);
-        console.log("endRow = ", endRow);*/
+        /*       console.log("startCol = ", startCol);
+               console.log("endCol = ", endCol);
+               console.log("startRow = ", startRow);
+               console.log("endRow = ", endRow);*/
 
         for (let c = startCol; c <= endCol; c++) {
             for (let r = startRow; r <= endRow; r++) {
@@ -154,18 +166,22 @@ class Game {
     };
 
     _drawPNJs() {
-        if (this.pnj.isVisible(this.camera.x, this.camera.y)) {
-            this.context.drawImage(
-                this.pnj.image, //Image
-                this.pnj.image.width / this.pnj.image.nbSpriteRow, //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
-                this.pnj.image.height / this.pnj.image.nbSpriteCol, // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
-                this.pnj.image.width / this.pnj.image.nbSpriteRow, // Largeur de l'image source
-                this.pnj.image.height / this.pnj.image.nbSpriteCol, // Hauteur de l'image source
-                (this.pnj.x - this.pnj.width / 2) - this.camera.x, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
-                (this.pnj.y - this.pnj.height / 2) - this.camera.y, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
-                (this.pnj.image.width / this.pnj.image.nbSpriteRow) * this.pnj.scale, // La largeur de l'image dessinée
-                (this.pnj.image.height / this.pnj.image.nbSpriteCol) * this.pnj.scale // La hauteur de l'image dessinée
-            );
+        for (var pnj of this.pnjs) {
+            if(pnj.getMapId() == this.map.getId()){
+                if (pnj.isVisible(this.camera.x, this.camera.y)) {
+                    this.context.drawImage(
+                        pnj.image, //Image
+                        pnj.image.width / pnj.image.nbSpriteRow, //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                        pnj.image.height / pnj.image.nbSpriteCol, // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                        pnj.image.width / pnj.image.nbSpriteRow, // Largeur de l'image source
+                        pnj.image.height / pnj.image.nbSpriteCol, // Hauteur de l'image source
+                        (pnj.x - pnj.width / 2) - this.camera.x, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+                        (pnj.y - pnj.height / 2) - this.camera.y, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+                        (pnj.image.width / pnj.image.nbSpriteRow) * pnj.scale, // La largeur de l'image dessinée
+                        (pnj.image.height / pnj.image.nbSpriteCol) * pnj.scale // La hauteur de l'image dessinée
+                    );
+                }
+            }
         }
     };
 

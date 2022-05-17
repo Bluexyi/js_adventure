@@ -1,6 +1,8 @@
 class PNJ {
 
-    constructor(map, x, y, speed, spriteName, state, movementPattern) {
+    constructor(id, mapId, map, x, y, speed, spriteName, state, movementPattern) {
+        this.id = id;
+        this.mapId = mapId
         this.map = map;
         this.x = x;
         this.y = y;
@@ -21,6 +23,14 @@ class PNJ {
 
         this.scale = 1; //Sprite grossissement
 
+    }
+
+    getId(){
+        return this.id;
+    }
+
+    getMapId(){
+        return this.mapId;
     }
 
     initStates() {
