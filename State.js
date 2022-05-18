@@ -13,7 +13,7 @@ class State {
         }
     };
 
-    getState(name) {
+    getByName(name) {
         if (this.states[name]) {
             return this.states[name];
         }

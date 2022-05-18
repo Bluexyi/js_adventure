@@ -1,25 +1,137 @@
 class Hero {
 
-    constructor(map, x, y, speed, spriteName, state) {
+    constructor(map, x, y, size, speed, spriteName, state) {
         this.map = map;
         this.x = x;
         this.y = y;
         this.speed = speed
-        this.width = map.getTsize();
-        this.height = map.getTsize();
-
+        this.image = null;
+        this.width = size;
+        this.height = size;
         this.spriteName = spriteName;
         this.state = state;
-
         this.count = 0;
-
         this.direction = "down";
         this.lastDirection = "down";
         this.spriteSpeed = 5; //Plus petit = plus rapide
-
         this.scale = 1; //Sprite grossissement
-
         this.idPnjCollision = 0; 
+    }
+
+    getMap(){
+        return this.map;
+    }
+
+    getId(){
+        return this.id;
+    }
+
+    getName(){
+        return this.name;
+    }
+
+    getText(){
+        return this.text;
+    }
+
+    getMapId(){
+        return this.mapId;
+    }
+
+    getX(){
+        return this.x;
+    }
+
+    getY(){
+        return this.y;
+    }
+
+    getSpeed(){
+        return this.speed;
+    }
+
+    getWidth(){
+        return this.width
+    }
+
+    getImage(){
+        return this.image;
+    }
+
+    getHeight(){
+        return this.height;
+    }
+
+    getSpriteName(){
+        return this.spriteName;
+    }
+
+    getMovementPattern(){
+        return this.movementPattern;
+    }
+
+    getCount(){
+        return this.count;
+    }
+
+    getDirection(){
+        return this.direction;
+    }
+
+    getLastDirection(){
+        return this.lastDirection;
+    }
+
+    getSpriteSpeed(){
+        return this.spriteSpeed;
+    }
+
+    getScale(){
+        return this.scale;
+    }
+
+    getIdPnjCollision(){
+        return this.idPnjCollision;
+    }
+
+    getState(){
+        return this.state;
+    }
+
+    setX(x){
+        this.x = x;
+    }
+
+    setY(y){
+        this.y = y;
+    }
+
+    setImage(image){
+        this.image = image;
+    }
+
+    setWidth(width){
+        this.width = width;
+    }
+
+    setHeight(height){
+        this.height = height;
+    }
+
+    setDirection(direction){
+        this.direction = direction;
+    }
+
+    setLastDirection(lastDirection){
+        this.lastDirection = lastDirection;
+    }
+
+    setMap(map){
+        this.map = map;
+    }
+
+    setIdPnjCollision(idPnjCollision){
+        this.idPnjCollision = idPnjCollision;
     }
 
     initStates() {
@@ -30,36 +142,12 @@ class Hero {
     }
 
     move(delta, dirx, diry) { //dirx diry (vaux soit 0 1 ou -1) corresponds à la direction du déplacement en cours
-        /*console.log("delta : ", delta);
-        console.log("dirx : ", dirx);
-        console.log("diry : ", diry);
-        console.log("this.x : ", this.x);
-        console.log("this.y : ", this.y);*/
-
-        
- /*       console.log("X = ", dirx)
-        console.log("Y = ", diry)
-*/
-        //delta est environs égale à 0.01
-
-        // move hero
-        //this.x et this.y correponds à la position du hero
-        //console.log("BEFORE this.x = ", this.x)
-        //console.log("BEFORE this.y = ", this.y)
 
         let beforeX = this.x;
         let beforeY = this.y;
 
         this.x += dirx * this.speed * delta;
         this.y += diry * this.speed * delta;
-        //console.log("AFTER this.x = ", this.x)
-        //console.log("AFTER this.y = ", this.y)
-
-        // vérifier si on a marché dans une dalle non praticable
-        /*  console.log("X = ", Math.floor(this.x / this.width))
-          console.log("Y = ", Math.floor(this.y / this.height) + 1)
-          console.log(this.map.getTile(4, Math.floor(this.y / this.height) + 1, Math.floor(this.x / this.width)));*/
-
 
         this.pnjCollision(dirx, diry, beforeX, beforeY);
         this._collide(dirx, diry);
@@ -83,28 +171,24 @@ class Hero {
         let centerBottomY = this.y + this.height / 2;
 
         if (diry > 0) {
-            //console.log("bas")
             this.idPnjCollision = this.map.pnjCollision(this.x, centerBottomY);
             if(this.idPnjCollision > 0){
                 this.y = beforeY;
             }
         }
         else if (diry < 0) {
-            //console.log("haut")
             this.idPnjCollision = this.map.pnjCollision(this.x, centerTopY);
             if(this.idPnjCollision > 0){
                 this.y = beforeY;
             }
         }
         else if (dirx > 0) {
-            //console.log("droite")
             this.idPnjCollision = this.map.pnjCollision(centerRightX, this.y);
             if(this.idPnjCollision > 0){
                 this.x = beforeX;
             }
         }
         else if (dirx < 0) {
-            //console.log("gauche")
             this.idPnjCollision = this.map.pnjCollision(centerLeftX, this.y);
             if(this.idPnjCollision > 0){
                 this.x = beforeX;
@@ -115,18 +199,13 @@ class Hero {
 
     _collide(dirx, diry) { //dirx diry (vaux soit 0 1 ou -1) corresponds à la direction du déplacement en cours
         var row, col;
-        // -1 à droite et en bas est parce que l'image varie de 0..63
-        // et non jusqu'à 64
 
-        var left = this.x - this.width / 2; //exemple positon 251.73503999999912 = 283.7350399999991 - 64 / 2 = 283.7350399999991 - 32
-        /* console.log("this.x : ", this.x); // 283.7350399999991
-           console.log("this.width : ", this.width); //64
-           console.log("left : ", left); // 251.73503999999912 */
+        // -1 à droite et en bas est parce que l'image varie de 0..63 et non jusqu'à 64
+        var left = this.x - this.width / 2;
         var right = this.x + this.width / 2 - 1;
         var top = this.y - (this.height / 2 - 20);
         var bottom = this.y + this.height / 2 - 1;
 
-        // vérification des collisions sur les diagonales
         var collision =
             this.map.isSolidTileAtXY(left, top) ||
             this.map.isSolidTileAtXY(right, top) ||
@@ -136,46 +215,22 @@ class Hero {
 
         //On arrive ici SI COLLISION 
 
-        // vérification des collisions sur les côtés
         if (diry > 0) {
-            //console.log("bas")
             row = this.map.getRow(bottom);
             this.y = -this.height / 2 + this.map.getY(row);
         }
         else if (diry < 0) {
-            //console.log("haut")
             row = this.map.getRow(top);
             this.y = (this.height / 2 - 20) + this.map.getY(row + 1);
         }
         else if (dirx > 0) {
-            //console.log("droite")
             col = this.map.getCol(right);
-            this.x = -this.width / 2 + this.map.getX(col); //HERE ICI !!!! //this.width est la largeur de la map
+            this.x = -this.width / 2 + this.map.getX(col);
         }
         else if (dirx < 0) {
-            //console.log("gauche")
-            col = this.map.getCol(left); // col = 3
-            this.x = this.width / 2 + this.map.getX(col + 1); // 288 = 64 / 2 + 256 = 32 + 256
-            /* console.log('---------');
-             console.log('col = ', col);
-             console.log('this.width = ', this.width);
-             console.log('this.x = ', this.x);
-             console.log('this.map.getX(col + 1) = ', this.map.getX(col + 1));*/
+            col = this.map.getCol(left);
+            this.x = this.width / 2 + this.map.getX(col + 1);
         }
-        //console.log("#######################")
-
-        /*
-        ####################### Hero.js:101:17
-        this.x :  283.7350399999991 Hero.js:60:17
-        this.width :  64 Hero.js:61:17
-        left :  251.73503999999912 Hero.js:62:17
-        --------- Hero.js:95:21
-        col =  3 Hero.js:96:21
-        this.width =  64 Hero.js:97:21
-        this.x =  288 Hero.js:98:21
-        this.map.getX(col + 1) =  256 Hero.js:99:21
-        #######################
-*/
     };
 
 }

@@ -52,18 +52,10 @@ class Map {
     }
 
     getTile(layer, col, row) {
-        // todo
-
         return this.layers[layer][row * this.cols + col];
-        // (1, 2, 2)
-        // layers[1][2*8 + 2]
-        // layers[1][16 + 2]
-        // layers[1][20]
-        // 1
     };
 
     isSolidTileAtXY(x, y) {
-        //Math.floor(x) renvoie le plus grand entier qui est inférieur ou égal à un nombre x
         var col = Math.floor(x / this.tsize);
         var row = Math.floor(y / this.tsize);
 
@@ -85,9 +77,6 @@ class Map {
     }
 
     getCol(x) {
-        // x = 5
-        // 5 / 64
-        // return 0
         return Math.floor(x / this.tsize);
     };
 
@@ -96,9 +85,6 @@ class Map {
     };
 
     getX(col) {
-        // col = 4
-        // 4 * 64
-        // return 256
         return col * this.tsize;
     };
 

@@ -9,10 +9,12 @@ window.onload = function () {
   let map = maps[1];
 
   for(var pnj of pnjs){
+    pnj.setWidth(map.getTsize());
+    pnj.setHeight(map.getTsize());
     maps[pnj.getMapId()].addPnj(pnj);
   }
 
-  let hero = new Hero(map, 160, 160, 256, 'hero', state);
+  let hero = new Hero(map, 160, 160, map.getTsize(), 256, 'hero', state);
   let camera = new Camera(map, canvas.width , canvas.height);
   let game = new Game(keyboard, map, camera, loader, hero, context);
 
@@ -27,8 +29,9 @@ TRANSPARENT CONTOUR TILE BOTTOM TREE
 [OK] PNJ PER MAP
 [OK] LE PNJ ne doit pas traverser un joueur
 [OK] GET TEXT PNJ
+EXPORT BOX DIALOGUE
 PNJ TOURNE QUAND GET TEXT
-DARW BOX DIALOGUE PNJ
+[OK] DARW BOX DIALOGUE PNJ
 [OK] ENTER IN HOUSE
 ANIMATE TILE
 Changement TILEMAP en fonction de l'heure de la journée

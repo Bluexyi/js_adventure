@@ -10,18 +10,14 @@ class PNJ {
         this.speed = speed
         this.width = size;
         this.height = size;
-
+        this.image = null;
         this.spriteName = spriteName;
         this.state = state;
-        
         this.movementPattern = movementPattern
-        
         this.count = 0;
-        
         this.direction = "down";
         this.lastDirection = "down";
         this.spriteSpeed = 5; //Plus petit = plus rapide
-
         this.scale = 1; //Sprite grossissement
 
     }
@@ -50,12 +46,60 @@ class PNJ {
         return this.y;
     }
 
+    getSpeed(){
+        return this.speed;
+    }
+
     getWidth(){
         return this.width
     }
 
+    getImage(){
+        return this.image;
+    }
+
     getHeight(){
         return this.height;
+    }
+
+    getSpriteName(){
+        return this.spriteName;
+    }
+
+    getMovementPattern(){
+        return this.movementPattern;
+    }
+
+    getCount(){
+        return this.count;
+    }
+
+    getDirection(){
+        return this.direction;
+    }
+
+    getLastDirection(){
+        return this.lastDirection;
+    }
+
+    getSpriteSpeed(){
+        return this.spriteSpeed;
+    }
+
+    getScale(){
+        return this.scale;
+    }
+
+    setImage(image){
+        this.image = image;
+    }
+
+    setWidth(width){
+        this.width = width;
+    }
+
+    setHeight(height){
+        this.height = height;
     }
 
     initStates() {

@@ -7,10 +7,9 @@ class Game {
         this.loader = loader;
         this.hero = hero;
         this.context = context;
-
-        this.tick = this.tick.bind(this)
-
+        this.tick = this.tick.bind(this);
         this.currentDialogue = "";
+        this.isBoxDialogueOpen = false;
     }
 
     //Initialise les évenements du clavier
@@ -19,22 +18,19 @@ class Game {
         this.keyboard.listenForEvents(
             [this.keyboard.LEFT, this.keyboard.RIGHT, this.keyboard.UP, this.keyboard.DOWN, this.keyboard.ACTION]);
 
-        //MAP
-        //this.map = new Map(1, "bourgpalette", 12, 12, 64, "todo"),
-
         //PNJS
         for (var pnj of this.map.getPnjs()) {
-            pnj.image = this.loader.getImage(pnj.spriteName)
-            pnj.width = pnj.image.width / pnj.image.nbSpriteRow
-            pnj.height = pnj.image.height / pnj.image.nbSpriteCol
+            pnj.setImage(this.loader.getImage(pnj.getSpriteName()))
+            pnj.setWidth(pnj.getImage().width / pnj.getImage().nbSpriteRow)
+            pnj.height = pnj.getImage().height / pnj.getImage().nbSpriteCol //TODO class image
             pnj.initStates()
         }
 
         //HERO
         this.tileMap = this.loader.getImage('tiles')
-        this.hero.image = this.loader.getImage(this.hero.spriteName)
-        this.hero.width = this.hero.image.width / this.hero.image.nbSpriteRow
-        this.hero.height = this.hero.image.height / this.hero.image.nbSpriteCol
+        this.hero.setImage(this.loader.getImage(this.hero.getSpriteName()))
+        this.hero.setWidth(this.hero.getImage().width / this.hero.getImage().nbSpriteRow)
+        this.hero.setHeight(this.hero.getImage().height / this.hero.getImage().nbSpriteCol)
         this.hero.initStates()
         this.camera.follow(this.hero)
     };
@@ -63,23 +59,22 @@ class Game {
         let newHeroPosition = this.map.getRedirection(newMapId);
         let newMap = maps[newMapId];
         this.map = newMap;
-        this.hero.map = newMap;
+        this.hero.setMap(newMap);
         this.camera.changeMap(newMap);
         for (var pnj of this.map.getPnjs()) {
             if (pnj.getMapId() == newMap.getId()) {
-                pnj.map = newMap;
-                pnj.image = this.loader.getImage(pnj.spriteName)
-                pnj.width = pnj.image.width / pnj.image.nbSpriteRow
-                pnj.height = pnj.image.height / pnj.image.nbSpriteCol
+                pnj.setImage(this.loader.getImage(pnj.getSpriteName()))
+                pnj.setWidth(pnj.getImage().width / pnj.getImage().nbSpriteRow)
+                pnj.setHeight(pnj.getImage().height / pnj.getImage().nbSpriteCol)
             }
         }
-        this.hero.x = newHeroPosition[0];
-        this.hero.y = newHeroPosition[1];
+        this.hero.setX(newHeroPosition[0]);
+        this.hero.setY(newHeroPosition[1]);
 
     }
 
     startTransition() {
-        this.context.fillRect(0, 0, this.width, this.height)
+        this.context.fillRect(0, 0, this.width, this.height) //TODO
     }
 
     tick(elapsed) {
@@ -101,32 +96,36 @@ class Game {
         // gérer le mouvement du héros avec les touches fléchées
         var dirx = 0;
         var diry = 0;
-        if (this.hero.direction != "static") {
-            this.hero.lastDirection = this.hero.direction;
+        if (this.hero.getDirection() != "static") {
+            this.hero.setLastDirection(this.hero.getDirection());
         }
 
         if (this.keyboard.isDown(this.keyboard.LEFT)) {
             this.currentDialogue = "";
+            this.isBoxDialogueOpen = false;
             dirx = -1;
-            this.hero.direction = "left";
+            this.hero.setDirection("left"); //TODO ENUM DIRECTION
         }
         else if (this.keyboard.isDown(this.keyboard.RIGHT)) {
             this.currentDialogue = "";
+            this.isBoxDialogueOpen = false;
             dirx = 1;
-            this.hero.direction = "right";
+            this.hero.setDirection("right");
         }
         else if (this.keyboard.isDown(this.keyboard.UP)) {
             this.currentDialogue = "";
+            this.isBoxDialogueOpen = false;
             diry = -1;
-            this.hero.direction = "up";
+            this.hero.setDirection("up");
         }
         else if (this.keyboard.isDown(this.keyboard.DOWN)) {
             this.currentDialogue = "";
+            this.isBoxDialogueOpen = false;
             diry = 1;
-            this.hero.direction = "down";
+            this.hero.setDirection("down");
         }
         else {
-            this.hero.direction = "static";
+            this.hero.setDirection("static");
         }
 
         this.hero.move(delta, dirx, diry);
@@ -136,11 +135,12 @@ class Game {
             this.redirectionMap(redirectionNumber);
         }
 
-        if (this.keyboard.isDown(this.keyboard.ACTION)) {
-            if (this.hero.idPnjCollision > 0) {
+        if (this.keyboard.isDown(this.keyboard.ACTION) && !this.isBoxDialogueOpen) {
+            if (this.hero.getIdPnjCollision() > 0) {
+                this.isBoxDialogueOpen = true;
                 for (var pnj of this.map.getPnjs()) {
-                    if (pnj.getId() == this.hero.idPnjCollision) {
-                        this.currentDialogue = pnj.getName() + " : " + pnj.getText();
+                    if (pnj.getId() == this.hero.getIdPnjCollision()) {
+                        this.typeWritter(pnj.getName() + " : " + pnj.getText());
                     }
                 }
             }
@@ -161,9 +161,6 @@ class Game {
             return this;
         }
 
-        var posX = (canvas.width / 2) - 100;
-        var posY = (canvas.height / 2) - 100;
-
         this.context.roundRect(10, canvas.height - 150, canvas.width - 20, 140, 8);
 
         this.context.fillStyle = 'rgba(45, 45, 45, 0.7)';
@@ -174,6 +171,22 @@ class Game {
         this.context.fill();
 
         this._drawTextDialogue(text);
+    }
+
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async typeWritter(txt) {
+        for (let i = 0; i < txt.length; i++) {
+            if(this.isBoxDialogueOpen){
+                this.currentDialogue += txt.charAt(i);
+                await this.sleep(i * 0.3);
+            }else{
+                this.currentDialogue = "";
+                break
+            }
+        }
     }
 
     _drawTextDialogue(text) {
@@ -187,6 +200,7 @@ class Game {
         for (var i = 0; i < lines.length; i++) {
             this.context.fillText(lines[i], textSize, canvas.height - 130 + (i * lineheight));
         }
+        //this.context.fillText(lines[i], textSize, canvas.height - 130 + (i * lineheight));
 
         // this.context.fillText(text, 20, canvas.height - 115, canvas.width - 50);
     }
@@ -231,15 +245,15 @@ class Game {
             if (pnj.getMapId() == this.map.getId()) {
                 if (pnj.isVisible(this.camera.x, this.camera.y)) {
                     this.context.drawImage(
-                        pnj.image, //Image
-                        pnj.image.width / pnj.image.nbSpriteRow, //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
-                        pnj.image.height / pnj.image.nbSpriteCol, // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
-                        pnj.image.width / pnj.image.nbSpriteRow, // Largeur de l'image source
-                        pnj.image.height / pnj.image.nbSpriteCol, // Hauteur de l'image source
-                        (pnj.x) - this.camera.x, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
-                        (pnj.y) - this.camera.y, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
-                        (pnj.image.width / pnj.image.nbSpriteRow) * pnj.scale, // La largeur de l'image dessinée
-                        (pnj.image.height / pnj.image.nbSpriteCol) * pnj.scale // La hauteur de l'image dessinée
+                        pnj.getImage(), //Image
+                        pnj.getImage().width / pnj.getImage().nbSpriteRow, //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                        pnj.getImage().height / pnj.getImage().nbSpriteCol, // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                        pnj.getImage().width / pnj.getImage().nbSpriteRow, // Largeur de l'image source
+                        pnj.getImage().height / pnj.getImage().nbSpriteCol, // Hauteur de l'image source
+                        (pnj.getX()) - this.camera.x, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+                        (pnj.getY()) - this.camera.y, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+                        (pnj.getImage().width / pnj.getImage().nbSpriteRow) * pnj.getScale(), // La largeur de l'image dessinée
+                        (pnj.getImage().height / pnj.getImage().nbSpriteCol) * pnj.getScale() // La hauteur de l'image dessinée
                     );
                 }
             }
@@ -247,42 +261,42 @@ class Game {
     };
 
     _drawHero(stateName) {
-        if (this.hero.direction != 'static') {
+        if (this.hero.getDirection() != 'static') {
             this.context.drawImage(
-                this.hero.image, //Image
-                this.hero.state.getState(stateName).frameIndex * (this.hero.image.width / this.hero.image.nbSpriteRow), //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
-                this.hero.state.getState(stateName).colIndex * (this.hero.image.height / this.hero.image.nbSpriteCol), // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
-                this.hero.image.width / this.hero.image.nbSpriteRow, // Largeur de l'image source
-                this.hero.image.height / this.hero.image.nbSpriteCol, // Hauteur de l'image source 
+                this.hero.getImage(), //Image
+                this.hero.getState().getByName(stateName).frameIndex * (this.hero.getImage().width / this.hero.getImage().nbSpriteRow), //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                this.hero.getState().getByName(stateName).colIndex * (this.hero.getImage().height / this.hero.getImage().nbSpriteCol), // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                this.hero.getImage().width / this.hero.getImage().nbSpriteRow, // Largeur de l'image source
+                this.hero.getImage().height / this.hero.getImage().nbSpriteCol, // Hauteur de l'image source 
                 this.hero.screenX - this.hero.width / 2, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
                 this.hero.screenY - this.hero.height / 2, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
-                (this.hero.image.width / this.hero.image.nbSpriteRow) * this.hero.scale, // La largeur de l'image dessinée
-                (this.hero.image.height / this.hero.image.nbSpriteCol) * this.hero.scale // La hauteur de l'image dessinée
+                (this.hero.getImage().width / this.hero.getImage().nbSpriteRow) * this.hero.scale, // La largeur de l'image dessinée
+                (this.hero.getImage().height / this.hero.getImage().nbSpriteCol) * this.hero.scale // La hauteur de l'image dessinée
             );
 
 
             //Pour boucler sur les sprite
             this.hero.count++;
             if (this.hero.count > this.hero.spriteSpeed) {
-                this.hero.state.getState(stateName).frameIndex++;
+                this.hero.getState().getByName(stateName).frameIndex++;
                 this.hero.count = 0;
             }
 
             //Quand on arrive à la dernière on recommence à 0
-            if (this.hero.state.getState(stateName).frameIndex > this.hero.state.getState(stateName).endRowIndex) {
-                this.hero.state.getState(stateName).frameIndex = this.hero.state.getState(stateName).startRowIndex;
+            if (this.hero.getState().getByName(stateName).frameIndex > this.hero.getState().getByName(stateName).endRowIndex) {
+                this.hero.getState().getByName(stateName).frameIndex = this.hero.getState().getByName(stateName).startRowIndex;
             }
         } else {
             this.context.drawImage(
-                this.hero.image, //Image
-                this.hero.state.getState(this.hero.lastDirection).frameIndex * (this.hero.image.width / this.hero.image.nbSpriteRow), //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
-                this.hero.state.getState(this.hero.lastDirection).colIndex * (this.hero.image.height / this.hero.image.nbSpriteCol), // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
-                this.hero.image.width / this.hero.image.nbSpriteRow, // Largeur de l'image source
-                this.hero.image.height / this.hero.image.nbSpriteCol, // Hauteur de l'image source 
+                this.hero.getImage(), //Image
+                this.hero.getState().getByName(this.hero.lastDirection).frameIndex * (this.hero.getImage().width / this.hero.getImage().nbSpriteRow), //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                this.hero.getState().getByName(this.hero.lastDirection).colIndex * (this.hero.getImage().height / this.hero.getImage().nbSpriteCol), // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                this.hero.getImage().width / this.hero.getImage().nbSpriteRow, // Largeur de l'image source
+                this.hero.getImage().height / this.hero.getImage().nbSpriteCol, // Hauteur de l'image source 
                 this.hero.screenX - this.hero.width / 2, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
                 this.hero.screenY - this.hero.height / 2, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
-                (this.hero.image.width / this.hero.image.nbSpriteRow) * this.hero.scale, // La largeur de l'image dessinée
-                (this.hero.image.height / this.hero.image.nbSpriteCol) * this.hero.scale // La hauteur de l'image dessinée
+                (this.hero.getImage().width / this.hero.getImage().nbSpriteRow) * this.hero.scale, // La largeur de l'image dessinée
+                (this.hero.getImage().height / this.hero.getImage().nbSpriteCol) * this.hero.scale // La hauteur de l'image dessinée
             );
         }
 
@@ -292,17 +306,17 @@ class Game {
         this.context.strokeRect(
             this.hero.screenX - this.hero.width / 2,
             this.hero.screenY - this.hero.height / 2,
-            this.hero.image.width / this.hero.image.nbSpriteRow,
-            this.hero.image.height / this.hero.image.nbSpriteCol
+            this.hero.getImage().width / this.hero.getImage().nbSpriteRow,
+            this.hero.getImage().height / this.hero.getImage().nbSpriteCol
         );
     };
 
     _drawBoxCollision() {
         this.context.strokeRect(
-            this.hero.screenX - this.hero.width / 2,
-            this.hero.screenY - this.hero.height / 2,
-            this.hero.width,
-            this.hero.height
+            this.hero.screenX - this.hero.getWidth() / 2,
+            this.hero.screenY - this.hero.getHeight() / 2,
+            this.hero.getWidth(),
+            this.hero.getHeight()
         );
     };
 
@@ -340,7 +354,7 @@ class Game {
         //console.log("x = " + this.camera.x + " y = " + this.camera.y)
 
         // dessiner personnage principal au centre de l'ecran
-        this._drawHero(this.hero.direction);
+        this._drawHero(this.hero.getDirection());
 
         // dessine les elements au second plan
         this._drawLayer(2);
