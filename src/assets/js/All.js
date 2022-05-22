@@ -6,6 +6,7 @@ TRANSPARENT CONTOUR TILE BOTTOM TREE
 [OK] LE PNJ ne doit pas traverser un joueur
 [OK] GET TEXT PNJ
 EXPORT BOX DIALOGUE
+Police ecriture Pixel
 PNJ TOURNE QUAND GET TEXT
 [OK] DARW BOX DIALOGUE PNJ
 [OK] ENTER IN HOUSE
@@ -1236,3 +1237,4 @@ let camera = new Camera(map, canvas.width , canvas.height);
 let game = new Game(keyboard, map, camera, loader, hero, context);
 
 game.run();
+

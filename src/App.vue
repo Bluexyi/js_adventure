@@ -1,7 +1,7 @@
 <template>
 <nav>
   <router-link to="/">Accueil</router-link> | 
-  <router-link :to="{name: 'game', params: {name: 'hero'}}">Le jeu</router-link>
+  <router-link :to="{name: 'game', params: {name: 'hero', sexe: 'f'}}">Le jeu</router-link>
 </nav>
 <router-view /> <!--Permet de charger et d'affiche la vue du router -->
 </template>

@@ -1,16 +1,17 @@
 <template>
-  <h1>Le monde de {{ name }} !</h1>
+  <h1>A toi de jouer {{ name }} !</h1>
   <canvas id="canvas"></canvas>
 </template>
 
 <script>
 export default {
   name: "Game",
-  props: ["name"],
+  props: ["name", "sexe"],
   methods: {},
   components: {},
   mounted() {
-    let heroName22 = this.name;
+    let heroName = this.name;
+    let heroSexe = this.sexe;
     /* TODO LIST :
       EFFET DE TRANSITION QUAND REDIRECTION
       TRANSPARENT CONTOUR TILE BOTTOM TREE
@@ -934,9 +935,9 @@ export default {
           !this.isBoxDialogueOpen
         ) {
           if (this.hero.getIdPnjCollision() > 0) {
-            this.isBoxDialogueOpen = true;
             for (var pnj of this.map.getPnjs()) {
               if (pnj.getId() == this.hero.getIdPnjCollision()) {
+                this.isBoxDialogueOpen = true;
                 this.typeWritter(pnj.getName() + " : " + pnj.getText());
               }
             }
@@ -1140,7 +1141,7 @@ export default {
 
       _drawHeroName() {
         let textSize = 20;
-        if (this.hero.getSexe() == "H") {
+        if (this.hero.getSexe() == "M") {
           this.context.fillStyle = "#358dff";
         } else {
           this.context.fillStyle = "#e53bff";
@@ -1282,15 +1283,22 @@ export default {
       maps[pnj.getMapId()].addPnj(pnj);
     }
 
+    let heroSprite;
+    if(heroSexe == "M"){
+      heroSprite = "man"
+    }else{
+      heroSprite = "woman"
+    }
+
     let hero = new Hero(
       map,
       160,
       160,
-      heroName22,
-      "H",
+      heroName,
+      heroSexe,
       map.getTsize(),
       256,
-      "man",
+      heroSprite,
       state
     );
     let camera = new Camera(map, canvas.width, canvas.height);

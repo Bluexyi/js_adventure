@@ -14,7 +14,7 @@ const routes = [
         }
     }, {
         name: 'game',
-        path: '/game/:name',
+        path: '/game/:name/:sexe',
         component: Game,
         meta: {
             title: 'Game'
