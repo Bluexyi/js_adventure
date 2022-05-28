@@ -1,3 +1,16 @@
+FRONT
+npm install
+npm run serve
+http://localhost:8080
+
+
+BACK
+npm install
+node .\index.js
+http://localhost:3000
+
+
+
 # loginproject
 
 ## Project setup

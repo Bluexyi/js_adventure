@@ -4,12 +4,21 @@
 </template>
 
 <script>
+import { io } from 'socket.io-client';
 export default {
   name: "Game",
   props: ["name", "sexe"],
   methods: {},
   components: {},
   mounted() {
+
+    var socket = io.connect('http://localhost:3000');
+
+    socket.on('news', function(msg){
+        console.log(msg)
+    });
+
+
     let heroName = this.name;
     let heroSexe = this.sexe;
     /* TODO LIST :
