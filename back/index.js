@@ -1,26 +1,3 @@
-//#############################################
-   
-  
-  
-      //#############################################
-      //HERO
-      //#############################################
-      class Hero {
-        constructor(map, x, y, name, sexe, size, speed, spriteName, state) {
-          this.map = map;
-          this.x = x;
-          this.y = y;
-          this.name = name;
-          this.sexe = sexe;
-          this.speed = speed;
-          this.image = null;
-          this.width = size;
-          this.height = size;
-          this.spriteName = spriteName;
-          this.state = state;
-        }
-      }
-
 //############################################################################################################################
 
 
@@ -44,19 +21,19 @@ app.get('/json', function (req, res) {
     res.status(200).json({ "message": "ok" })
 })
 
-
 let heros = {};
 
 //Web socket connection
 io.on('connection', (socket) => {
     console.log(`Connecté au client ${socket.id}`)
     //Emission d'un évènement
-    io.emit('news', 'Voici un nouvel élément envoyé par le serveur')
+    io.emit('get socket id', socket.id)
 
-    heros[socket.id] = new Hero(null, 160, 160, null, null, null, null, null, null);
+    heros[socket.id] = null;
 
     //Delete disconnected player
     socket.on('disconnect', function () {
+        console.log(`Déconnecté au client ${socket.id}`)
         delete heros[socket.id];
     });
 })
@@ -67,13 +44,21 @@ function update() {
     io.volatile.emit('hero list', Object.values(heros)); //Le flag volatile signifie que le paquet de données peut être perdu (à cause d'une latence, d'une déconnexion, etc...).
 }
 
-setInterval(update, 1000 / 6);
-
+setInterval(update, 1000 / 60);
 
 io.on('connection', function (socket) {
     socket.on('init hero', function (myhero) {
         heros[socket.id] = myhero
+        heros[socket.id].hero.id = socket.id
     });
+
+    socket.on('move hero', function (position) {
+        if(heros != {}){
+        heros[socket.id].hero.x = position.x
+        heros[socket.id].hero.y = position.y
+        }
+    });
+
 });
 
 

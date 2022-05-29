@@ -4,26 +4,28 @@
 </template>
 
 <script>
-import { io } from 'socket.io-client';
+import { io } from "socket.io-client";
 export default {
   name: "Game",
   props: ["name", "sexe"],
   methods: {},
   components: {},
   mounted() {
+    var socket = io.connect("http://localhost:3003");
 
-    var socket = io.connect('http://localhost:3003');
+    let socketID;
 
-    socket.on('news', function(msg){
-        console.log(msg)
+    socket.on("get socket id", function (id) {
+      socketID = id;
     });
 
     let heros = [];
 
-    //Écoutez l'événement players list et mettez à jour la liste des joueurs à chaque fois qu'il survient. 
-    socket.on('hero list', function (list) {
-        heros = list;
-    })
+    //Écoutez l'événement players list et mettez à jour la liste des joueurs à chaque fois qu'il survient.
+    socket.on("hero list", function (list) {
+      // console.log("list ", list)
+      heros = list;
+    });
 
     let heroName = this.name;
     let heroSexe = this.sexe;
@@ -497,7 +499,8 @@ export default {
     //HERO
     //#############################################
     class Hero {
-      constructor(map, x, y, name, sexe, size, speed, spriteName, state) {
+      constructor(id, map, x, y, name, sexe, size, speed, spriteName, state) {
+        this.id = id;
         this.map = map;
         this.x = x;
         this.y = y;
@@ -515,6 +518,10 @@ export default {
         this.spriteSpeed = 5; //Plus petit = plus rapide
         this.scale = 1; //Sprite grossissement
         this.idPnjCollision = 0;
+      }
+
+      getId() {
+        return this.id;
       }
 
       getMap() {
@@ -661,6 +668,8 @@ export default {
         var maxY = this.map.getRows() * this.map.getTsize();
         this.x = Math.max(0, Math.min(this.x, maxX));
         this.y = Math.max(0, Math.min(this.y, maxY));
+
+        socket.emit("move hero", { x: this.x, y: this.y });
       }
 
       isRedirect() {
@@ -845,7 +854,7 @@ export default {
         this.hero.initStates();
         this.camera.follow(this.hero);
 
-        socket.emit('init hero', { hero : this.hero });
+        socket.emit("init hero", { hero: this.hero });
       }
 
       //Charge les images dans un dictionnaire
@@ -1093,8 +1102,90 @@ export default {
         }
       }
 
+      _drawOtherHeros() {
+        for (var heroWS of heros) {
+          if (heroWS != null) {
+            if (heroWS["hero"].id != socketID) {
+              console.log("draw other : " + heroWS["hero"].name + " id : " + heroWS["hero"].id)
+              let hero = new Hero();
+              Object.assign(hero, heroWS["hero"]);
+              hero.state = new State();
+              hero.setImage(this.loader.getImage(hero.getSpriteName()));
+              hero.initStates();
+              //console.log("heros : ", hero.getId());
+              //console.log(hero.getName() + " x:" + hero.getX() + " y:" + hero.getY());
+
+              this.context.drawImage(
+                hero.getImage(), //Image
+                hero.getImage().width / hero.getImage().nbSpriteRow, //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                hero.getImage().height / hero.getImage().nbSpriteCol, // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                hero.getImage().width / hero.getImage().nbSpriteRow, // Largeur de l'image source
+                hero.getImage().height / hero.getImage().nbSpriteCol, // Hauteur de l'image source
+                hero.getX() - hero.width / 2 - this.camera.x, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+                hero.getY() - hero.height / 2 - this.camera.y, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+                (hero.getImage().width / hero.getImage().nbSpriteRow) *
+                  hero.getScale(), // La largeur de l'image dessinée
+                (hero.getImage().height / hero.getImage().nbSpriteCol) *
+                  hero.getScale() // La hauteur de l'image dessinée
+              );
+
+              /* if (hero.getDirection() != "static") {
+            this.context.drawImage(
+              hero.getImage(), //Image
+              hero.getState().getByName(stateName).frameIndex *
+                (hero.getImage().width / hero.getImage().nbSpriteRow), //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+              hero.getState().getByName(stateName).colIndex *
+                (hero.getImage().height / hero.getImage().nbSpriteCol), // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+              hero.getImage().width / hero.getImage().nbSpriteRow, // Largeur de l'image source
+              hero.getImage().height / hero.getImage().nbSpriteCol, // Hauteur de l'image source
+              hero.screenX - hero.width / 2, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+              hero.screenY - hero.height / 2, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+              (hero.getImage().width / hero.getImage().nbSpriteRow) *
+                hero.scale, // La largeur de l'image dessinée
+              (hero.getImage().height / hero.getImage().nbSpriteCol) *
+                hero.scale // La hauteur de l'image dessinée
+            );
+
+            //Pour boucler sur les sprite
+            hero.count++;
+            if (hero.count > hero.spriteSpeed) {
+              hero.getState().getByName(stateName).frameIndex++;
+              hero.count = 0;
+            }
+
+            //Quand on arrive à la dernière on recommence à 0
+            if (
+              hero.getState().getByName(stateName).frameIndex >
+              hero.getState().getByName(stateName).endRowIndex
+            ) {
+              hero.getState().getByName(stateName).frameIndex = hero
+                .getState()
+                .getByName(stateName).startRowIndex;
+            }
+          } else {
+            this.context.drawImage(
+              hero.getImage(), //Image
+              hero.getState().getByName(hero.lastDirection).frameIndex *
+                (hero.getImage().width / hero.getImage().nbSpriteRow), //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+              hero.getState().getByName(hero.lastDirection).colIndex *
+                (hero.getImage().height / hero.getImage().nbSpriteCol), // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+              hero.getImage().width / hero.getImage().nbSpriteRow, // Largeur de l'image source
+              hero.getImage().height / hero.getImage().nbSpriteCol, // Hauteur de l'image source
+              hero.screenX - hero.width / 2, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+              hero.screenY - hero.height / 2, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+              (hero.getImage().width / hero.getImage().nbSpriteRow) *
+                hero.scale, // La largeur de l'image dessinée
+              (hero.getImage().height / hero.getImage().nbSpriteCol) *
+                hero.scale // La hauteur de l'image dessinée
+            );
+          }*/
+            }
+          }
+        }
+      }
+
       _drawHero(stateName) {
-        console.log("HERO LIST = ", heros)
+         console.log("draw hero : " + this.hero.name + " id : " + this.hero.id)
         if (this.hero.getDirection() != "static") {
           this.context.drawImage(
             this.hero.getImage(), //Image
@@ -1111,14 +1202,12 @@ export default {
             (this.hero.getImage().height / this.hero.getImage().nbSpriteCol) *
               this.hero.scale // La hauteur de l'image dessinée
           );
-
           //Pour boucler sur les sprite
           this.hero.count++;
           if (this.hero.count > this.hero.spriteSpeed) {
             this.hero.getState().getByName(stateName).frameIndex++;
             this.hero.count = 0;
           }
-
           //Quand on arrive à la dernière on recommence à 0
           if (
             this.hero.getState().getByName(stateName).frameIndex >
@@ -1145,8 +1234,7 @@ export default {
               this.hero.scale // La hauteur de l'image dessinée
           );
         }
-
-   /*     this.context.beginPath();
+        /*     this.context.beginPath();
         this.context.strokeStyle = "#f00"; // some color/style
         this.context.lineWidth = 2; // thickness
         this.context.strokeRect(
@@ -1206,6 +1294,9 @@ export default {
       }
 
       render() {
+
+        console.log("socket id ", socketID)
+        
         // dessiner le revetement du sol
         this._drawLayer(0);
 
@@ -1218,15 +1309,16 @@ export default {
 
         // dessiner personnage principal au centre de l'ecran
         this._drawHero(this.hero.getDirection());
+        this._drawOtherHeros();
 
         // dessine les elements au second plan
         this._drawLayer(2);
 
         //pour afficher la grille (debug)
-       // this._drawGrid();
+        // this._drawGrid();
 
         //Afficher la box collision du Hero
-       // this._drawBoxCollision();
+        // this._drawBoxCollision();
 
         this._drawHeroName();
 
@@ -1302,13 +1394,14 @@ export default {
     }
 
     let heroSprite;
-    if(heroSexe == "M"){
-      heroSprite = "man"
-    }else{
-      heroSprite = "woman"
+    if (heroSexe == "M") {
+      heroSprite = "man";
+    } else {
+      heroSprite = "woman";
     }
 
     let hero = new Hero(
+      0,
       map,
       160,
       160,
