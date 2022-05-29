@@ -12,12 +12,18 @@ export default {
   components: {},
   mounted() {
 
-    var socket = io.connect('http://localhost:3000');
+    var socket = io.connect('http://localhost:3003');
 
     socket.on('news', function(msg){
         console.log(msg)
     });
 
+    let heros = [];
+
+    //Écoutez l'événement players list et mettez à jour la liste des joueurs à chaque fois qu'il survient. 
+    socket.on('hero list', function (list) {
+        heros = list;
+    })
 
     let heroName = this.name;
     let heroSexe = this.sexe;
@@ -838,6 +844,8 @@ export default {
         );
         this.hero.initStates();
         this.camera.follow(this.hero);
+
+        socket.emit('init hero', { hero : this.hero });
       }
 
       //Charge les images dans un dictionnaire
@@ -1086,6 +1094,7 @@ export default {
       }
 
       _drawHero(stateName) {
+        console.log("HERO LIST = ", heros)
         if (this.hero.getDirection() != "static") {
           this.context.drawImage(
             this.hero.getImage(), //Image
