@@ -48,14 +48,34 @@ setInterval(update, 1000 / 60);
 
 io.on('connection', function (socket) {
     socket.on('init hero', function (myhero) {
-        heros[socket.id] = myhero
-        heros[socket.id].hero.id = socket.id
+        if (heros != {}) {
+            heros[socket.id] = myhero
+            heros[socket.id].hero.id = socket.id
+        }
     });
 
     socket.on('move hero', function (position) {
-        if(heros != {}){
-        heros[socket.id].hero.x = position.x
-        heros[socket.id].hero.y = position.y
+        if (heros != {}) {
+            heros[socket.id].hero.x = position.x
+            heros[socket.id].hero.y = position.y
+        }
+    });
+
+    socket.on('Change hero direction', function (data) {
+        if (heros != {}) {
+            heros[socket.id].hero.direction = data.direction
+        }
+    });
+
+    socket.on('Change hero last direction', function (data) {
+        if (heros != {}) {
+            heros[socket.id].hero.lastDirection = data.lastDirection
+        }
+    });
+
+    socket.on('Move state', function (data) {
+        if (heros != {}) {
+            heros[socket.id].hero.state = data.state
         }
     });
 

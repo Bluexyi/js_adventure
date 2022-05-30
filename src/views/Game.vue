@@ -916,6 +916,9 @@ export default {
         var diry = 0;
         if (this.hero.getDirection() != "static") {
           this.hero.setLastDirection(this.hero.getDirection());
+          socket.emit("Change hero last direction", {
+            lastDirection: this.hero.getLastDirection(),
+          });
         }
 
         if (this.keyboard.isDown(this.keyboard.LEFT)) {
@@ -941,6 +944,9 @@ export default {
         } else {
           this.hero.setDirection("static");
         }
+        socket.emit("Change hero direction", {
+          direction: this.hero.getDirection(),
+        });
 
         this.hero.move(delta, dirx, diry);
         this.camera.update();
@@ -1101,74 +1107,65 @@ export default {
             if (heroWS["hero"].id != socket.id) {
               let hero = new Hero();
               Object.assign(hero, heroWS["hero"]);
-              hero.state = new State();
+              hero.state = new State(); //todo set state avec retour web socket
+              Object.assign(hero.state, heroWS["hero"].state);
               hero.setImage(this.loader.getImage(hero.getSpriteName()));
-              hero.initStates();
 
-              this.context.drawImage(
-                hero.getImage(), //Image
-                hero.getImage().width / hero.getImage().nbSpriteRow, //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
-                hero.getImage().height / hero.getImage().nbSpriteCol, // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
-                hero.getImage().width / hero.getImage().nbSpriteRow, // Largeur de l'image source
-                hero.getImage().height / hero.getImage().nbSpriteCol, // Hauteur de l'image source
-                hero.getX() - hero.width / 2 - this.camera.x, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
-                hero.getY() - hero.height / 2 - this.camera.y, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
-                (hero.getImage().width / hero.getImage().nbSpriteRow) *
-                  hero.getScale(), // La largeur de l'image dessinée
-                (hero.getImage().height / hero.getImage().nbSpriteCol) *
-                  hero.getScale() // La hauteur de l'image dessinée
-              );
+              if (hero.getDirection() != "static") {
+                context.drawImage(
+                  hero.getImage(), //Image
+                  hero.getState().getByName(hero.getDirection()).frameIndex *
+                    (hero.getImage().width / hero.getImage().nbSpriteRow), //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                  hero.getState().getByName(hero.getDirection()).colIndex *
+                    (hero.getImage().height / hero.getImage().nbSpriteCol), // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                  hero.getImage().width / hero.getImage().nbSpriteRow, // Largeur de l'image source
+                  hero.getImage().height / hero.getImage().nbSpriteCol, // Hauteur de l'image source
+                  hero.getX() - hero.width / 2 - camera.x, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+                  hero.getY() - hero.height / 2 - camera.y, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+                  (hero.getImage().width / hero.getImage().nbSpriteRow) *
+                    hero.scale, // La largeur de l'image dessinée
+                  (hero.getImage().height / hero.getImage().nbSpriteCol) *
+                    hero.scale // La hauteur de l'image dessinée
+                );
 
-              /* if (hero.getDirection() != "static") {
-            this.context.drawImage(
-              hero.getImage(), //Image
-              hero.getState().getByName(stateName).frameIndex *
-                (hero.getImage().width / hero.getImage().nbSpriteRow), //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
-              hero.getState().getByName(stateName).colIndex *
-                (hero.getImage().height / hero.getImage().nbSpriteCol), // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
-              hero.getImage().width / hero.getImage().nbSpriteRow, // Largeur de l'image source
-              hero.getImage().height / hero.getImage().nbSpriteCol, // Hauteur de l'image source
-              hero.screenX - hero.width / 2, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
-              hero.screenY - hero.height / 2, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
-              (hero.getImage().width / hero.getImage().nbSpriteRow) *
-                hero.scale, // La largeur de l'image dessinée
-              (hero.getImage().height / hero.getImage().nbSpriteCol) *
-                hero.scale // La hauteur de l'image dessinée
-            );
+                //Pour boucler sur les sprite
+                hero.count++;
+                if (hero.count > hero.spriteSpeed) {
+                  hero.getState().getByName(hero.getDirection()).frameIndex++;
+                  hero.count = 0;
+                }
 
-            //Pour boucler sur les sprite
-            hero.count++;
-            if (hero.count > hero.spriteSpeed) {
-              hero.getState().getByName(stateName).frameIndex++;
-              hero.count = 0;
-            }
-
-            //Quand on arrive à la dernière on recommence à 0
-            if (
-              hero.getState().getByName(stateName).frameIndex >
-              hero.getState().getByName(stateName).endRowIndex
-            ) {
-              hero.getState().getByName(stateName).frameIndex = hero
-                .getState()
-                .getByName(stateName).startRowIndex;
-            }
-          } else {
-            this.context.drawImage(
-              hero.getImage(), //Image
-              hero.getState().getByName(hero.lastDirection).frameIndex *
-                (hero.getImage().width / hero.getImage().nbSpriteRow), //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
-              hero.getState().getByName(hero.lastDirection).colIndex *
-                (hero.getImage().height / hero.getImage().nbSpriteCol), // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
-              hero.getImage().width / hero.getImage().nbSpriteRow, // Largeur de l'image source
-              hero.getImage().height / hero.getImage().nbSpriteCol, // Hauteur de l'image source
-              hero.screenX - hero.width / 2, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
-              hero.screenY - hero.height / 2, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
-              (hero.getImage().width / hero.getImage().nbSpriteRow) *
-                hero.scale, // La largeur de l'image dessinée
-              (hero.getImage().height / hero.getImage().nbSpriteCol) *
-                hero.scale // La hauteur de l'image dessinée
-            );
-          }*/
+                //Quand on arrive à la dernière on recommence à 0
+                if (
+                  hero.getState().getByName(hero.getDirection()).frameIndex >
+                  hero.getState().getByName(hero.getDirection()).endRowIndex
+                ) {
+                  console.log(
+                    "frameindex other = ",
+                    hero.getState().getByName(hero.getDirection()).frameIndex
+                  );
+                  hero.getState().getByName(hero.getDirection()).frameIndex =
+                    hero
+                      .getState()
+                      .getByName(hero.getDirection()).startRowIndex;
+                }
+              } else {
+                this.context.drawImage(
+                  hero.getImage(), //Image
+                  hero.getState().getByName(hero.lastDirection).frameIndex *
+                    (hero.getImage().width / hero.getImage().nbSpriteRow), //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                  hero.getState().getByName(hero.lastDirection).colIndex *
+                    (hero.getImage().height / hero.getImage().nbSpriteCol), // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                  hero.getImage().width / hero.getImage().nbSpriteRow, // Largeur de l'image source
+                  hero.getImage().height / hero.getImage().nbSpriteCol, // Hauteur de l'image source
+                  hero.getX() - hero.width / 2 - this.camera.x, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+                  hero.getY() - hero.height / 2 - this.camera.y, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+                  (hero.getImage().width / hero.getImage().nbSpriteRow) *
+                    hero.scale, // La largeur de l'image dessinée
+                  (hero.getImage().height / hero.getImage().nbSpriteCol) *
+                    hero.scale // La hauteur de l'image dessinée
+                );
+              }
             }
           }
         }
@@ -1194,9 +1191,11 @@ export default {
           //Pour boucler sur les sprite
           this.hero.count++;
           if (this.hero.count > this.hero.spriteSpeed) {
-            this.hero.getState().getByName(stateName).frameIndex++;
+            this.hero.getState().getByName(stateName).frameIndex++; //todo envoyer frameIdex pour animation marche
+            socket.emit("Move state", { state: this.hero.state });
             this.hero.count = 0;
           }
+
           //Quand on arrive à la dernière on recommence à 0
           if (
             this.hero.getState().getByName(stateName).frameIndex >
@@ -1205,6 +1204,7 @@ export default {
             this.hero.getState().getByName(stateName).frameIndex = this.hero
               .getState()
               .getByName(stateName).startRowIndex;
+            socket.emit("Move state", { state: this.hero.state });
           }
         } else {
           this.context.drawImage(
@@ -1285,7 +1285,6 @@ export default {
       }
 
       render() {
-        
         // dessiner le revetement du sol
         this._drawLayer(0);
 
