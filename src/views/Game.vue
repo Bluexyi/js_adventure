@@ -13,17 +13,10 @@ export default {
   mounted() {
     var socket = io.connect("http://localhost:3003");
 
-    let socketID;
-
-    socket.on("get socket id", function (id) {
-      socketID = id;
-    });
-
     let heros = [];
 
     //Écoutez l'événement players list et mettez à jour la liste des joueurs à chaque fois qu'il survient.
     socket.on("hero list", function (list) {
-      // console.log("list ", list)
       heros = list;
     });
 
@@ -1105,15 +1098,12 @@ export default {
       _drawOtherHeros() {
         for (var heroWS of heros) {
           if (heroWS != null) {
-            if (heroWS["hero"].id != socketID) {
-              console.log("draw other : " + heroWS["hero"].name + " id : " + heroWS["hero"].id)
+            if (heroWS["hero"].id != socket.id) {
               let hero = new Hero();
               Object.assign(hero, heroWS["hero"]);
               hero.state = new State();
               hero.setImage(this.loader.getImage(hero.getSpriteName()));
               hero.initStates();
-              //console.log("heros : ", hero.getId());
-              //console.log(hero.getName() + " x:" + hero.getX() + " y:" + hero.getY());
 
               this.context.drawImage(
                 hero.getImage(), //Image
@@ -1185,7 +1175,6 @@ export default {
       }
 
       _drawHero(stateName) {
-         console.log("draw hero : " + this.hero.name + " id : " + this.hero.id)
         if (this.hero.getDirection() != "static") {
           this.context.drawImage(
             this.hero.getImage(), //Image
@@ -1234,15 +1223,17 @@ export default {
               this.hero.scale // La hauteur de l'image dessinée
           );
         }
-        /*     this.context.beginPath();
-        this.context.strokeStyle = "#f00"; // some color/style
-        this.context.lineWidth = 2; // thickness
-        this.context.strokeRect(
-          this.hero.screenX - this.hero.width / 2,
-          this.hero.screenY - this.hero.height / 2,
-          this.hero.getImage().width / this.hero.getImage().nbSpriteRow,
-          this.hero.getImage().height / this.hero.getImage().nbSpriteCol
-        ); */
+        /*     
+          this.context.beginPath();
+          this.context.strokeStyle = "#f00"; // some color/style
+          this.context.lineWidth = 2; // thickness
+          this.context.strokeRect(
+            this.hero.screenX - this.hero.width / 2,
+            this.hero.screenY - this.hero.height / 2,
+            this.hero.getImage().width / this.hero.getImage().nbSpriteRow,
+            this.hero.getImage().height / this.hero.getImage().nbSpriteCol
+          ); 
+        */
       }
 
       _drawHeroName() {
@@ -1294,8 +1285,6 @@ export default {
       }
 
       render() {
-
-        console.log("socket id ", socketID)
         
         // dessiner le revetement du sol
         this._drawLayer(0);
@@ -1305,7 +1294,6 @@ export default {
 
         //Dessiner les PNJs
         this._drawPNJs();
-        //console.log("x = " + this.camera.x + " y = " + this.camera.y)
 
         // dessiner personnage principal au centre de l'ecran
         this._drawHero(this.hero.getDirection());
@@ -1401,7 +1389,7 @@ export default {
     }
 
     let hero = new Hero(
-      0,
+      socket.id,
       map,
       160,
       160,
