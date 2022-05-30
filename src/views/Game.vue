@@ -1107,7 +1107,7 @@ export default {
             if (heroWS["hero"].id != socket.id) {
               let hero = new Hero();
               Object.assign(hero, heroWS["hero"]);
-              hero.state = new State(); //todo set state avec retour web socket
+              hero.state = new State();
               Object.assign(hero.state, heroWS["hero"].state);
               hero.setImage(this.loader.getImage(hero.getSpriteName()));
 
@@ -1140,10 +1140,6 @@ export default {
                   hero.getState().getByName(hero.getDirection()).frameIndex >
                   hero.getState().getByName(hero.getDirection()).endRowIndex
                 ) {
-                  console.log(
-                    "frameindex other = ",
-                    hero.getState().getByName(hero.getDirection()).frameIndex
-                  );
                   hero.getState().getByName(hero.getDirection()).frameIndex =
                     hero
                       .getState()
@@ -1191,7 +1187,7 @@ export default {
           //Pour boucler sur les sprite
           this.hero.count++;
           if (this.hero.count > this.hero.spriteSpeed) {
-            this.hero.getState().getByName(stateName).frameIndex++; //todo envoyer frameIdex pour animation marche
+            this.hero.getState().getByName(stateName).frameIndex++;
             socket.emit("Move state", { state: this.hero.state });
             this.hero.count = 0;
           }
@@ -1236,6 +1232,32 @@ export default {
         */
       }
 
+      _drawOtherHeroName() {
+        for (var heroWS of heros) {
+          if (heroWS != null) {
+            if (heroWS["hero"].id != socket.id) {
+              let hero = new Hero();
+              Object.assign(hero, heroWS["hero"]);
+              
+              let textSize = 20;
+              if (hero.getSexe() == "M") {
+                this.context.fillStyle = "#358dff";
+              } else {
+                this.context.fillStyle = "#e53bff";
+              }
+              this.context.textAlign = "center";
+              this.context.font = textSize + "px serif";
+
+              this.context.fillText(
+                hero.getName(),
+                hero.getX() - hero.width / 2 - camera.x + 20,
+                hero.getY() - hero.height / 2 - camera.y - 10
+              );
+            }
+          }
+        }
+      }
+
       _drawHeroName() {
         let textSize = 20;
         if (this.hero.getSexe() == "M") {
@@ -1247,7 +1269,7 @@ export default {
         this.context.font = textSize + "px serif";
 
         this.context.fillText(
-          this.hero.getName(),
+          this.hero.getName() + " [moi]",
           this.hero.screenX,
           this.hero.screenY - this.hero.height / 2 - 10
         );
@@ -1308,6 +1330,7 @@ export default {
         // this._drawBoxCollision();
 
         this._drawHeroName();
+        this._drawOtherHeroName();
 
         if (this.currentDialogue != "") {
           this._drawBoxDialogue(this.currentDialogue);
