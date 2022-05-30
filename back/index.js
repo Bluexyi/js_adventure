@@ -79,6 +79,12 @@ io.on('connection', function (socket) {
         }
     });
 
+    socket.on('Change map', function (data) {
+        if (heros != {}) {
+            heros[socket.id].hero.map = data.map
+        }
+    });
+
 });
 
 

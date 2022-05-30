@@ -754,6 +754,7 @@ export default {
       }
 
       changeMap(map) {
+        socket.emit("Change map", { map: map });
         this.maxX = map.getCols() * map.getTsize() - this.width;
         this.maxY = map.getRows() * map.getTsize() - this.height;
       }
@@ -1105,12 +1106,15 @@ export default {
         for (var heroWS of heros) {
           if (heroWS != null) {
             if (heroWS["hero"].id != socket.id) {
+              if (heroWS["hero"].map.id == this.map.getId()) {
+
               let hero = new Hero();
               Object.assign(hero, heroWS["hero"]);
               hero.state = new State();
               Object.assign(hero.state, heroWS["hero"].state);
+              Object.assign(hero.map, heroWS["hero"].map);
               hero.setImage(this.loader.getImage(hero.getSpriteName()));
-
+              
               if (hero.getDirection() != "static") {
                 context.drawImage(
                   hero.getImage(), //Image
@@ -1161,6 +1165,7 @@ export default {
                   (hero.getImage().height / hero.getImage().nbSpriteCol) *
                     hero.scale // La hauteur de l'image dessinée
                 );
+              }
               }
             }
           }
@@ -1236,23 +1241,25 @@ export default {
         for (var heroWS of heros) {
           if (heroWS != null) {
             if (heroWS["hero"].id != socket.id) {
-              let hero = new Hero();
-              Object.assign(hero, heroWS["hero"]);
-              
-              let textSize = 20;
-              if (hero.getSexe() == "M") {
-                this.context.fillStyle = "#358dff";
-              } else {
-                this.context.fillStyle = "#e53bff";
-              }
-              this.context.textAlign = "center";
-              this.context.font = textSize + "px serif";
+              if (heroWS["hero"].map.id == this.map.getId()) {
+                let hero = new Hero();
+                Object.assign(hero, heroWS["hero"]);
 
-              this.context.fillText(
-                hero.getName(),
-                hero.getX() - hero.width / 2 - camera.x + 20,
-                hero.getY() - hero.height / 2 - camera.y - 10
-              );
+                let textSize = 20;
+                if (hero.getSexe() == "M") {
+                  this.context.fillStyle = "#358dff";
+                } else {
+                  this.context.fillStyle = "#e53bff";
+                }
+                this.context.textAlign = "center";
+                this.context.font = textSize + "px serif";
+
+                this.context.fillText(
+                  hero.getName(),
+                  hero.getX() - hero.width / 2 - camera.x + 20,
+                  hero.getY() - hero.height / 2 - camera.y - 10
+                );
+              }
             }
           }
         }
