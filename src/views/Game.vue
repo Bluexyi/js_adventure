@@ -1,5 +1,5 @@
 <template>
-  <h1>A toi de jouer {{ name }} !</h1>
+  <p>A toi de jouer {{ name }} !</p>
   <canvas id="canvas"></canvas>
 </template>
 
@@ -1035,7 +1035,7 @@ export default {
         let textSize = 20;
         this.context.fillStyle = "#1c2833";
         this.context.textAlign = "left";
-        this.context.font = textSize + "px serif";
+        this.context.font = textSize + "px rainyHearts";
 
         var lineheight = textSize;
         var lines = text.split("\n");
@@ -1245,14 +1245,14 @@ export default {
                 let hero = new Hero();
                 Object.assign(hero, heroWS["hero"]);
 
-                let textSize = 20;
+                let textSize = 12;
                 if (hero.getSexe() == "M") {
                   this.context.fillStyle = "#358dff";
                 } else {
                   this.context.fillStyle = "#e53bff";
                 }
                 this.context.textAlign = "center";
-                this.context.font = textSize + "px serif";
+                this.context.font = textSize + "px retroGame";
 
                 this.context.fillText(
                   hero.getName(),
@@ -1266,14 +1266,14 @@ export default {
       }
 
       _drawHeroName() {
-        let textSize = 20;
+        let textSize = 12;
         if (this.hero.getSexe() == "M") {
           this.context.fillStyle = "#358dff";
         } else {
           this.context.fillStyle = "#e53bff";
         }
         this.context.textAlign = "center";
-        this.context.font = textSize + "px serif";
+        this.context.font = textSize + "px retroGame";
 
         this.context.fillText(
           this.hero.getName() + " [moi]",
@@ -1442,7 +1442,7 @@ canvas {
   background: black;
   display: block;
   margin: 0 auto;
-  border: solid 6px #aaa;
-  border-radius: 10px;
+  border: solid 2px white;
+  border-radius: 3px;
 }
 </style>
