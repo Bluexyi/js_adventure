@@ -29,10 +29,10 @@ export default {
       [OK] PNJ PER MAP
       [OK] LE PNJ ne doit pas traverser un joueur
       [OK] GET TEXT PNJ
-      Displaye HERO when is visible
+      Display HERO when is visible
       EXPORT BOX DIALOGUE
       PNJ TOURNE QUAND GET TEXT
-      PNJ ANIMATION STATIC
+      [OK] PNJ ANIMATION STATIC
       [OK] DARW BOX DIALOGUE PNJ
       [OK] ENTER IN HOUSE
       ANIMATE TILE
@@ -244,35 +244,52 @@ export default {
     let statePNJ1 = new State();
     let statePNJ2 = new State();
     let statePNJ3 = new State();
+    let statePNJ4 = new State();
 
     let pnj1 = new PNJ(
       1,
       "Jordan",
-      "Salut frero, je suis ton demi-frere. \nNous nous sommes rencontré quand j'avais 12ans et toi \ntu en avais 10.",
-      1,
+      "J'ai l'impression de reussir à voir au travers \nde certains arbres en face. \nPeut-être que j'ai la vison à rayons X de Superman ?!",
+      1, //map
       64,
-      350,
-      250,
+      400, //x
+      625, //y
       256,
       "pnjStatic",
-      25,
+      25, //speed sprite
       'left',
       statePNJ1,
+      ["U", "U", "L", "B", "B", "D"]
+    );
+
+    let pnj4 = new PNJ(
+      4,
+      "Romain",
+      "Franchement, non mais franchement, avouez le, \nil est magnifique ce buisson !",
+      1, //map
+      64,
+      580, //x
+      438, //y
+      256,
+      "pnjStatic",
+      45, //speed sprite
+      'up',
+      statePNJ4,
       ["U", "U", "L", "B", "B", "D"]
     );
 
     let pnj2 = new PNJ(
       2,
       "Maxime",
-      "I collect old video games consoles and I'm \ntoo stupid to have the power cables to play them.. \nBut I speak English",
-      1,
+      "I collect old video games consoles and I'm \ntoo stupid to have the power cables to play them.. \n \nBut I speak English !!",
+      2, //map
       64,
-      520,
-      780,
-      256,
+      520, //x
+      70, //y
+      256, 
       "pnjStatic",
-      20,
-      'right',
+      20, //speed sprite
+      'down',
       statePNJ2,
       ["U", "U", "L", "B", "B", "D"]
     );
@@ -281,19 +298,19 @@ export default {
       3,
       "Régina",
       "J'arrive du Pérou, quel voyage.. \nIl est ou le soleil ? \nElle est ou la plage ?",
-      2,
+      3, //map
       64,
-      544,
-      74,
+      70, //x
+      128, //y
       256,
       "pnjStatic",
-      20,
-      'down',
+      20, //speed sprite
+      'right',
       statePNJ3,
       ["U", "U", "L", "B", "B", "D"]
     );
 
-    let pnjs = [pnj1, pnj2, pnj3];
+    let pnjs = [pnj1, pnj2, pnj3, pnj4];
 
     //#############################################
     //MAP
@@ -361,7 +378,7 @@ export default {
         // Boucle à travers toutes le layer de collision et retourne VRAI si 1 est trouvé.
         return this.layers.reduce(
           function (res) {
-            var tile = this.getTile(3, col, row);
+            var tile = this.getTile(4, col, row);
             var isSolid = tile === 1;
             return res || isSolid;
           }.bind(this),
@@ -411,60 +428,113 @@ export default {
     // 4 = arbre haut
     // 5 = arbuste
 
-    let map_1 = new Map(1, "bourgpalette", 12, 15, 64, { 2: [160, 64] }, [
+    let map_1 = new Map(1, "bourgpalette", 12, 15, 64, { 2: [160, 64], 3: [448, 630]}, [
       [
         //Texture sol
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1,
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1,
-        1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 
+        1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 
+        1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+        1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 
+        2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 
+        1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1,
       ],
       [
         //Elements premier plan
-        3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
-        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
-        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
-        3, 0, 0, 5, 5, 0, 0, 0, 0, 5, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
-        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
-        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 3,
-        3, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
+        3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 
+        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
+        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 
+        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
+        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 
+        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
+        3, 0, 0, 5, 5, 0, 0, 0, 0, 5, 0, 3, 
+        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
+        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 
+        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
+        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 
+        3, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 3,
+        3, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 3, 
+        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
         3, 3, 3, 0, 0, 3, 3, 3, 3, 3, 3, 3,
       ],
       [
         //Element seconds plan
-        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
-        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
-        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
-        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
-        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
-        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
-        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 0, 0, 4, 4, 4, 4, 4, 4, 4,
+        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 
+        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
+        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 
+        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
+        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 
+        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
+        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 
+        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
+        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 
+        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
+        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 
+        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
+        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 
+        4, 4, 4, 0, 0, 4, 4, 4, 4, 4, 4, 4,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       ],
       [
+        //Element troisieme plan
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+      ],
+      [
         //Collision
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1,
-        1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+        0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
         1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1,
       ],
       [
         //Redirection
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0,
       ],
     ]);
@@ -473,36 +543,155 @@ export default {
     let map_2 = new Map(2, "home", 11, 5, 64, { 1: [224, 888] }, [
       [
         //Texture sol
-        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-        2, 2, 2, 2, 2, 2, 2,
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
       ],
       [
         //Elements premier plan
-        3, 3, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 5, 0, 5, 0, 0, 0, 0, 0, 0, 3, 3, 0,
-        0, 0, 0, 5, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3,
-        3, 3, 3, 3, 3, 3, 3,
+        3, 3, 0, 3, 3, 3, 3, 3, 3, 3, 3, 
+        3, 5, 0, 5, 0, 0, 0, 0, 0, 0, 3, 
+        3, 0, 0, 0, 0, 5, 0, 0, 0, 0, 3, 
+        3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 
+        3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
       ],
       [
         //Element seconds plan
-        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-        4, 4, 4, 4, 4, 4, 4,
+        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
+        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 
+        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
+        4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      ],
+      [
+        //Element troisieme plan
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       ],
       [
         //Collision
-        1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0,
-        0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 1, 1, 1,
+        1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 
+        1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
       ],
       [
         //Redirection
-        0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0,
+        0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       ],
     ]);
     maps[2] = map_2;
+
+
+    let map_3 = new Map(3, "Secret", 8, 13, 64, { 1: [64, 704] }, [
+      [
+        //Texture sol
+        1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1,
+        0, 0, 0, 0, 1, 1, 1, 1,
+        0, 0, 0, 0, 1, 1, 1, 1,
+        0, 0, 0, 0, 1, 1, 1, 1,
+        0, 0, 0, 0, 1, 1, 1, 1,
+        0, 0, 0, 0, 1, 1, 1, 2,
+        0, 0, 0, 0, 1, 1, 1, 2,
+        0, 0, 0, 0, 1, 1, 1, 1,
+        0, 0, 0, 0, 1, 1, 1, 1,
+      ],
+      [
+        //Elements premier plan
+        3, 3, 3, 3, 3, 3, 3, 3,
+        3, 0, 0, 0, 0, 0, 0, 3,
+        3, 0, 0, 0, 0, 0, 0, 3,
+        3, 0, 0, 0, 0, 0, 0, 3,
+        3, 3, 3, 3, 3, 0, 0, 3,
+        0, 0, 0, 0, 3, 0, 0, 3,
+        0, 0, 0, 0, 3, 0, 0, 3,
+        0, 0, 0, 0, 3, 0, 0, 3,
+        0, 0, 0, 0, 3, 0, 0, 3,
+        0, 0, 0, 0, 3, 0, 0, 0,
+        0, 0, 0, 0, 3, 0, 0, 0,
+        0, 0, 0, 0, 3, 0, 0, 3,
+        0, 0, 0, 0, 3, 3, 3, 3,
+      ],
+      [
+        //Element seconds plan
+        4, 0, 0, 0, 0, 0, 0, 4,
+        4, 0, 0, 0, 0, 0, 0, 4,
+        4, 0, 0, 0, 0, 0, 0, 4,
+        4, 4, 4, 4, 4, 0, 0, 4,
+        0, 0, 0, 0, 4, 0, 0, 4,
+        0, 0, 0, 0, 4, 0, 0, 4,
+        0, 0, 0, 0, 4, 0, 0, 4,
+        0, 0, 0, 0, 4, 0, 0, 4,
+        0, 0, 0, 0, 4, 0, 0, 0,
+        0, 0, 0, 0, 4, 0, 0, 0,
+        0, 0, 0, 0, 4, 0, 0, 4,
+        0, 0, 0, 0, 4, 4, 4, 4,
+        0, 0, 0, 0, 0, 0, 0, 0,
+      ],
+      [
+        //Element troisieme plan
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+      ],
+      [
+        //Collision
+        1, 1, 1, 1, 1, 1, 1, 1,
+        1, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 1,
+        1, 1, 1, 1, 1, 0, 0, 1,
+        1, 1, 1, 1, 1, 0, 0, 1,
+        1, 1, 1, 1, 1, 0, 0, 1,
+        1, 1, 1, 1, 1, 0, 0, 1,
+        1, 1, 1, 1, 1, 0, 0, 1,
+        1, 1, 1, 1, 1, 0, 0, 0,
+        1, 1, 1, 1, 1, 0, 0, 0,
+        1, 1, 1, 1, 1, 0, 0, 1,
+        1, 1, 1, 1, 1, 1, 1, 1,
+      ],
+      [
+        //Redirection
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 1,
+        0, 0, 0, 0, 0, 0, 0, 1,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+      ],
+    ]);
+    maps[3] = map_3;
 
     //#############################################
     //HERO
@@ -653,6 +842,13 @@ export default {
         this.idPnjCollision = idPnjCollision;
       }
 
+      isVisible(cameraX, cameraY) {
+        return !(
+          this.x + this.width / 2 - cameraX < 0 ||
+          this.y + this.height / 2 - cameraY < 0
+        );
+      }
+
       initStates() {
         this.state.generateState("up", 0, 3, 0);
         this.state.generateState("down", 0, 3, 1);
@@ -683,7 +879,7 @@ export default {
 
       isRedirect() {
         return this.map.getTile(
-          4,
+          5,
           this.map.getCol(this.x),
           this.map.getCol(this.y)
         );
@@ -1144,61 +1340,63 @@ export default {
               if (heroWS["hero"].map.id == this.map.getId()) {
                 let hero = new Hero();
                 Object.assign(hero, heroWS["hero"]);
-                hero.state = new State();
-                Object.assign(hero.state, heroWS["hero"].state);
-                Object.assign(hero.map, heroWS["hero"].map);
-                hero.setImage(this.loader.getImage(hero.getSpriteName()));
+                if (hero.isVisible(this.camera.x, this.camera.y)) {
+                  hero.state = new State();
+                  Object.assign(hero.state, heroWS["hero"].state);
+                  Object.assign(hero.map, heroWS["hero"].map);
+                  hero.setImage(this.loader.getImage(hero.getSpriteName()));
 
-                if (hero.getDirection() != "static") {
-                  context.drawImage(
-                    hero.getImage(), //Image
-                    hero.getState().getByName(hero.getDirection()).frameIndex *
-                      (hero.getImage().width / hero.getImage().nbSpriteRow), //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
-                    hero.getState().getByName(hero.getDirection()).colIndex *
-                      (hero.getImage().height / hero.getImage().nbSpriteCol), // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
-                    hero.getImage().width / hero.getImage().nbSpriteRow, // Largeur de l'image source
-                    hero.getImage().height / hero.getImage().nbSpriteCol, // Hauteur de l'image source
-                    hero.getX() - hero.width / 2 - camera.x, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
-                    hero.getY() - hero.height / 2 - camera.y, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
-                    (hero.getImage().width / hero.getImage().nbSpriteRow) *
-                      hero.scale, // La largeur de l'image dessinée
-                    (hero.getImage().height / hero.getImage().nbSpriteCol) *
-                      hero.scale // La hauteur de l'image dessinée
-                  );
+                  if (hero.getDirection() != "static") {
+                    context.drawImage(
+                      hero.getImage(), //Image
+                      hero.getState().getByName(hero.getDirection()).frameIndex *
+                        (hero.getImage().width / hero.getImage().nbSpriteRow), //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                      hero.getState().getByName(hero.getDirection()).colIndex *
+                        (hero.getImage().height / hero.getImage().nbSpriteCol), // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                      hero.getImage().width / hero.getImage().nbSpriteRow, // Largeur de l'image source
+                      hero.getImage().height / hero.getImage().nbSpriteCol, // Hauteur de l'image source
+                      hero.getX() - hero.width / 2 - camera.x, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+                      hero.getY() - hero.height / 2 - camera.y, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+                      (hero.getImage().width / hero.getImage().nbSpriteRow) *
+                        hero.scale, // La largeur de l'image dessinée
+                      (hero.getImage().height / hero.getImage().nbSpriteCol) *
+                        hero.scale // La hauteur de l'image dessinée
+                    );
 
-                  //Pour boucler sur les sprite
-                  hero.count++;
-                  if (hero.count > hero.spriteSpeed) {
-                    hero.getState().getByName(hero.getDirection()).frameIndex++;
-                    hero.count = 0;
+                    //Pour boucler sur les sprite
+                    hero.count++;
+                    if (hero.count > hero.spriteSpeed) {
+                      hero.getState().getByName(hero.getDirection()).frameIndex++;
+                      hero.count = 0;
+                    }
+
+                    //Quand on arrive à la dernière on recommence à 0
+                    if (
+                      hero.getState().getByName(hero.getDirection()).frameIndex >
+                      hero.getState().getByName(hero.getDirection()).endRowIndex
+                    ) {
+                      hero.getState().getByName(hero.getDirection()).frameIndex =
+                        hero
+                          .getState()
+                          .getByName(hero.getDirection()).startRowIndex;
+                    }
+                  } else {
+                    this.context.drawImage(
+                      hero.getImage(), //Image
+                      hero.getState().getByName(hero.lastDirection).frameIndex *
+                        (hero.getImage().width / hero.getImage().nbSpriteRow), //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                      hero.getState().getByName(hero.lastDirection).colIndex *
+                        (hero.getImage().height / hero.getImage().nbSpriteCol), // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
+                      hero.getImage().width / hero.getImage().nbSpriteRow, // Largeur de l'image source
+                      hero.getImage().height / hero.getImage().nbSpriteCol, // Hauteur de l'image source
+                      hero.getX() - hero.width / 2 - this.camera.x, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+                      hero.getY() - hero.height / 2 - this.camera.y, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
+                      (hero.getImage().width / hero.getImage().nbSpriteRow) *
+                        hero.scale, // La largeur de l'image dessinée
+                      (hero.getImage().height / hero.getImage().nbSpriteCol) *
+                        hero.scale // La hauteur de l'image dessinée
+                    );
                   }
-
-                  //Quand on arrive à la dernière on recommence à 0
-                  if (
-                    hero.getState().getByName(hero.getDirection()).frameIndex >
-                    hero.getState().getByName(hero.getDirection()).endRowIndex
-                  ) {
-                    hero.getState().getByName(hero.getDirection()).frameIndex =
-                      hero
-                        .getState()
-                        .getByName(hero.getDirection()).startRowIndex;
-                  }
-                } else {
-                  this.context.drawImage(
-                    hero.getImage(), //Image
-                    hero.getState().getByName(hero.lastDirection).frameIndex *
-                      (hero.getImage().width / hero.getImage().nbSpriteRow), //La coordonnée x du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
-                    hero.getState().getByName(hero.lastDirection).colIndex *
-                      (hero.getImage().height / hero.getImage().nbSpriteCol), // La coordonnée y du bord en haut à gauche de la partie de l'image source à dessiner dans le contexte du canvas.
-                    hero.getImage().width / hero.getImage().nbSpriteRow, // Largeur de l'image source
-                    hero.getImage().height / hero.getImage().nbSpriteCol, // Hauteur de l'image source
-                    hero.getX() - hero.width / 2 - this.camera.x, // La coordonnée x dans le canvas de destination où placer le coin supérieur gauche de l'image source.
-                    hero.getY() - hero.height / 2 - this.camera.y, // La coordonnée y dans le canvas de destination où placer le coin supérieur gauche de l'image source.
-                    (hero.getImage().width / hero.getImage().nbSpriteRow) *
-                      hero.scale, // La largeur de l'image dessinée
-                    (hero.getImage().height / hero.getImage().nbSpriteCol) *
-                      hero.scale // La hauteur de l'image dessinée
-                  );
                 }
               }
             }
@@ -1364,8 +1562,11 @@ export default {
         // dessine les elements au second plan
         this._drawLayer(2);
 
+        // dessine les elements au troisieme plan
+        this._drawLayer(3);
+
         //pour afficher la grille (debug)
-        // this._drawGrid();
+         this._drawGrid();
 
         //Afficher la box collision du Hero
         // this._drawBoxCollision();
